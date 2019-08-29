@@ -123,6 +123,11 @@ var db = function (model, configs) {
                         this.whereBtw(field, condition);
                     }
                     break;
+                case 'LIKE':
+                    if (typeof condition === 'object') {
+                        this.whereLike(field, condition);
+                    }
+                    break;
                 default :
                     let wheres = ' `' + field + '` ' + op + ' \'' + condition + '\'';
                     this.wheres += this.wheres == '' ? wheres : (' ' + conjunction + ' ' + wheres);
@@ -215,11 +220,9 @@ var db = function (model, configs) {
      */
     this.whereLike = (field, condition) => {
         if (condition != undefined) {
-            this.where(field, 'LIKE', condition);
-        } else {
-            for (let k in field) {
-                let v = field[k];
-                this.where(k, 'LIKE', v);
+            if (typeof condition === 'string') {
+                let where = '`' + field + '` LIKE \'' + condition + '\'';
+                this.wheres += this.wheres == '' ? where : ' AND ' + where;
             }
         }
         return this;
@@ -361,6 +364,22 @@ var db = function (model, configs) {
     };
 
     /**
+     * @note 删除
+     * @param pk
+     * @returns {Promise<*>}
+     */
+    this.delete = async (pk) => {
+        if (pk != undefined) {
+            let id = await this.getPrimaryKey();
+            this.sql = 'DELETE FROM '+ '`' + model +'` WHERE `' + id + ' = ' + pk;
+        } else {
+            let wheres = this.getWheres();
+            this.sql = 'DELETE FROM ' + '`' + model + '`' + wheres;
+        }
+        return await this.query(this.sql);
+    };
+
+    /**
      * @note 处理update的参数数据
      * @param data
      */
@@ -443,6 +462,16 @@ var db = function (model, configs) {
             let val = condition[key];
 
             if (typeof val === 'object') {
+                switch (key.toUpperCase()) {
+                    case 'IN':
+                        this.whereIn(key, val);
+                        break;
+                    case 'BETWEEN':
+                        this.whereBtw(key, val);
+                        break;
+                    default:
+                        break;
+                }
                 this.dealObject(val, exp, key);
             } else {
                 //是否关键字 gt lt ...等
@@ -450,6 +479,8 @@ var db = function (model, configs) {
                     let s = this.strToExp(key);
                     let sqlPiece = '`' + pKey + '` ' + s + ' \'' + val + '\' ';
                     this.wheres += this.wheres == '' ? sqlPiece : (' ' + exp + ' ' + sqlPiece);
+                } else if (key.toUpperCase() === 'LIKE') {
+                    this.whereLike(key, val);
                 } else {
                     let sqlPiece = "`" + key + "` = \'" + val + '\' ';
                     this.wheres += this.wheres == '' ? sqlPiece : (' ' + exp + ' ' + sqlPiece);
