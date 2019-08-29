@@ -90,7 +90,7 @@ var db = function (model, configs) {
         if (pk != undefined) {
             let id = await this.getPrimaryKey();
             let where = {};
-            where[id] = pk;
+            where[id] = '\'' + pk + '\'';
             this.where(where).limit(1).select();
         } else {
             this.limit(1).select();
@@ -371,7 +371,7 @@ var db = function (model, configs) {
     this.delete = async (pk) => {
         if (pk != undefined) {
             let id = await this.getPrimaryKey();
-            this.sql = 'DELETE FROM '+ '`' + model +'` WHERE `' + id + ' = ' + pk;
+            this.sql = 'DELETE FROM '+ '`' + model +'` WHERE `' + id + '` = \'' + pk + '\'';
         } else {
             let wheres = this.getWheres();
             this.sql = 'DELETE FROM ' + '`' + model + '`' + wheres;
