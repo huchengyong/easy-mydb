@@ -1,0 +1,22 @@
+{
+  "name": "easy-mydb",
+  "version": "1.0.0",
+  "description": "easy for mysql",
+  "main": "index.js",
+  "dependencies": {
+    "mysql": "^2.17.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:huchengyong/my-db.git\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001beasy-mydb.git\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001bhttps://github.com/huchengyong/my-db.git\u001b[D\u001b[D\u001b[D\u001b[D\u001b[C\u001b[easy-mydb.git"
+  },
+  "keywords": [
+    "mysql"
+  ],
+  "author": "timesnewroman",
+  "license": "ISC"
+}
