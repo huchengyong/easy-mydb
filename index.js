@@ -124,9 +124,7 @@ var db = function (model, configs) {
                     }
                     break;
                 case 'LIKE':
-                    if (typeof condition === 'object') {
-                        this.whereLike(field, condition);
-                    }
+                    this.whereLike(field, condition);
                     break;
                 default :
                     let wheres = ' `' + field + '` ' + op + ' \'' + condition + '\'';
@@ -224,6 +222,13 @@ var db = function (model, configs) {
                 let where = '`' + field + '` LIKE \'' + condition + '\'';
                 this.wheres += this.wheres == '' ? where : ' AND ' + where;
             }
+        } else {
+            if (typeof field === 'object') {
+                for (let k in field) {
+                    let v = field[k];
+                    this.whereLike(k, v);
+                }
+            }
         }
         return this;
     };
@@ -289,7 +294,6 @@ var db = function (model, configs) {
 
             this.distincts = ' DISTINCT ' + distinct;
         }
-        console.log(this.distincts);
         return this;
     };
 
