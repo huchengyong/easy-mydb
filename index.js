@@ -11,6 +11,7 @@ var db = function (model, configs) {
         });
     }
 
+    this.prefix = configs.prefix || '';
     /*最终的sql语句*/
     this.sql = '';
     /*查询要筛选的字段*/
@@ -31,6 +32,8 @@ var db = function (model, configs) {
     this.insertFields = '';
     /*添加/更新的值*/
     this.insertValues = '';
+
+    model = this.prefix + model;
 
     /**
      * @note 获取mysql连接资源
