@@ -1,88 +1,80 @@
+const mysql = require('mysql')
+const api = require('./api')
 
-var db = function (model, configs) {
-    let pool = null;
-    if (typeof configs === 'object') {
-        pool = require('mysql').createPool({
-            connectionLimit: configs.limit || 10,
-            host: configs.host,
-            user: configs.user,
-            password: configs.password,
-            database: configs.database
-        });
-    }
+const Db = function () {
 
-    this.prefix = configs.prefix || '';
+    this.prefix = ''
     /*最终的sql语句*/
-    this.sql = '';
+    this.sql = ''
     /*查询要筛选的字段*/
-    this.fields = '*';
+    this.fields = '*'
     /*查询排序*/
-    this.orders = '';
+    this.orders = ''
     /*查询分组*/
-    this.groups = '';
+    this.groups = ''
     /*查询去重*/
-    this.distincts = '';
+    this.distincts = ''
     /*查询条件*/
-    this.wheres = '';
+    this.wheres = ''
     /*查询分页*/
-    this.limits = '';
+    this.limits = ''
     /*此表的字段*/
-    this.columns = [];
+    this.columns = []
     /*添加/更新的字段*/
-    this.insertFields = '';
+    this.insertFields = ''
     /*添加/更新的值*/
     this.insertValues = '';
-
-    model = this.prefix + model;
+    this.tableName = ''
+    this.connection = null
+    this.configs = {}
+    this.primaryKey = 'id'
 
     /**
      * @note 获取mysql连接资源
      * @returns {Promise<*>}
      */
-    this.getConnection = async () => {
-        /*执行结束后初始化数据*/
-        this.orders = '';
-        this.wheres = '';
-        this.insertFields = '';
-        this.insertValues = '';
-        return new Promise((resolve, reject) => {
-            pool.getConnection((err, connection) => {
-                if (err) {
-                    reject(err);
-                } else {
+    this.connect = (configs) => {
+        if (typeof configs !== 'object') throw 'Connection failed. Please check configuration parameters'
+
+        this.configs = configs
+
+        if (this.connection === null) {
+            const pool = mysql.createPool({
+                connectionLimit: configs.limit || 10,
+                host: configs.host,
+                user: configs.user,
+                password: configs.password,
+                database: configs.database
+            });
+            this.connection = new Promise((resolve) => {
+                pool.getConnection((err, connection) => {
+                    if (err) throw err
                     resolve(connection);
-                }
+                })
             })
-        });
+        }
     };
+
+    this.table = (tableName) => {
+        this.tableName = this.prefix + tableName
+        return this
+    }
 
     /**
      * @note 原生sql查询
      * @param sql
      * @returns {Promise<*>}
      */
-    this.query = async (sql) => {
-        return await this.getConnection().then((connection) => {
-            return new Promise((resolve, reject) => {
-                connection.query(sql, (error, results, fields) => {
-                    connection.release();
-                    if (error) {
-                        reject(error);
-                    } else {
-                        resolve(eval('(' + JSON.stringify(results) + ')'));
-                    }
-                });
-            })
-        });
+    this.query = (sql) => {
+        return api.query(this, sql);
     };
 
     /**
      * @note 查询多条数据
      * @returns {Promise<*>}
      */
-    this.select = async () => {
-        this.sql = 'SELECT ' + (this.distincts != '' ? this.distincts : this.fields) + ' FROM `' + model + '` ' + this.getWheres() + ' ' + this.groups + ' ' + this.getOrders() + this.getLimits();
-        return await this.query(this.sql);
+    this.select = () => {
+        return api.select(this);
     };
 
     /**
@@ -90,15 +82,7 @@ var db = function (model, configs) {
      * @returns {Promise<void>}
      */
     this.find = async (pk) => {
-        if (pk != undefined) {
-            let id = await this.getPrimaryKey();
-            let where = {};
-            where[id] = '\'' + pk + '\'';
-            this.where(where).limit(1).select();
-        } else {
-            this.limit(1).select();
-        }
-        return await this.query(this.sql);
+        return api.find(this, pk);
     };
 
     /**
@@ -352,7 +336,7 @@ var db = function (model, configs) {
                 }
             }
         }
-        this.sql = 'INSERT INTO' + ' `' + model + '` (' + this.insertFields + ') VALUE (' + this.insertValues + ')';
+        this.sql = 'INSERT INTO' + ' `' + this.tableName + '` (' + this.insertFields + ') VALUE (' + this.insertValues + ')';
         return await this.query(this.sql);
     };
 
@@ -366,7 +350,7 @@ var db = function (model, configs) {
         await this.setColumns();
         this.dealData(data);
         let sql = this.setUpdate();
-        this.sql = 'UPDATE `' + model + '` SET ' + sql + wheres;
+        this.sql = 'UPDATE `' + this.tableName + '` SET ' + sql + wheres;
         return await this.query(this.sql);
     };
 
@@ -375,16 +359,17 @@ var db = function (model, configs) {
      * @param pk
      * @returns {Promise<*>}
      */
-    this.delete = async (pk) => {
-        if (pk != undefined) {
-            let id = await this.getPrimaryKey();
-            this.sql = 'DELETE FROM '+ '`' + model +'` WHERE `' + id + '` = \'' + pk + '\'';
-        } else {
-            let wheres = this.getWheres();
-            this.sql = 'DELETE FROM ' + '`' + model + '`' + wheres;
-        }
-        return await this.query(this.sql);
+    this.delete = (pk) => {
+        return api.delete(this, pk)
     };
+
+    this.release = () => {
+        api.release(this)
+    }
+
+    this.setPrimaryKey = (primaryKey) => {
+        api.setPrimaryKey(this, primaryKey)
+    }
 
     /**
      * @note 处理update的参数数据
@@ -454,7 +439,7 @@ var db = function (model, configs) {
                 }
             }
         }
-        this.sql = 'INSERT INTO' + ' `' + model + '` ' + this.insertFields + ' VALUE ' + this.insertValues + '';
+        this.sql = 'INSERT INTO' + ' `' + this.tableName + '` ' + this.insertFields + ' VALUE ' + this.insertValues + '';
         return await this.query(this.sql);
     };
 
@@ -543,7 +528,7 @@ var db = function (model, configs) {
             "JOIN information_schema.key_column_usage k USING ( constraint_name, table_schema, table_name ) " +
             "WHERE " +
             "t.constraint_type = 'PRIMARY KEY' " +
-            "AND t.table_schema = '" + configs.database + "' AND t.table_name = '" + model + "'";
+            "AND t.table_schema = '" + this.configs.database + "' AND t.table_name = '" + this.tableName + "'";
         let pk = await this.query(sql);
         return pk[0].column_name || '';
     };
@@ -553,7 +538,7 @@ var db = function (model, configs) {
      * @returns {Promise<Array>}
      */
     this.setColumns = async () => {
-        let sql = 'DESC `' + model + '`';
+        let sql = 'DESC `' + this.tableName + '`';
         let result = await this.query(sql);
 
         let columns = [];
@@ -610,16 +595,38 @@ var db = function (model, configs) {
         return s;
     };
 
-    /**
-     * @note 获取最后一条sql语句
-     * @returns {string|*}
-     */
-    this.getLastSql = () => {
-        this.sql = (this.sql).replace(/\s+/g, ' ');
-        return this.sql;
-    };
-
     return this;
 };
+module.exports = Db
 
-module.exports = db;
+let db = new Db();
+
+db.connect({
+    host: '127.0.0.1',
+    user: 'root',
+    password: '123456',
+    database: 'test'
+})
+
+// let r1 = db.table('user').where({id:18}).select()
+// let r2 = db.table('user').where({id:19}).select()
+let r3 = db.table('goods').where({id:1}).find()
+let r4 = db.table('user').find(3)
+
+// r1.then((d) => {
+//     console.log(d)
+// })
+//
+// r2.then((d) => {
+//     console.log(d)
+// })
+
+r3.then((d) => {
+    console.log(d)
+})
+
+r4.then((d) => {
+    console.log(d)
+})
+
+db.release()
