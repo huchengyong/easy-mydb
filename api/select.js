@@ -1,6 +1,6 @@
 const query = require('./query');
 
-module.exports = function (mysql) {
+module.exports = (mysql) => {
     mysql.sql = 'SELECT ' + (mysql.distincts != '' ? mysql.distincts : mysql.fields)
         + ' FROM `' + mysql.tableName + '` '
         + mysql.getWheres() + ' ' + mysql.groups + ' '

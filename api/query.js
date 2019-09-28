@@ -1,4 +1,4 @@
-module.exports = function (mysql, sql) {
+module.exports = (mysql, sql) => {
     if (mysql.tableName === '')
         throw 'Undefined tableName. Please use table() define tableName'
 

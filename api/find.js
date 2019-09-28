@@ -1,8 +1,6 @@
 const select = require('./select')
-const query = require('./query')
-const lib = require('../lib')
 
-module.exports = function (mysql, pk) {
+module.exports = (mysql, pk) => {
     if (pk != undefined) {
         let where = {}
         where[mysql.primaryKey] = pk

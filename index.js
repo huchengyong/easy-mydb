@@ -63,7 +63,7 @@ const Db = function () {
      * @note 插入单条数据
      * @returns {Promise<void>}
      */
-    this.find = async (pk) => {
+    this.find = (pk) => {
         return api.find(this, pk)
     }
 
@@ -72,7 +72,7 @@ const Db = function () {
      * @param data 数据 必填
      * @returns {Promise<void>}
      */
-    this.insert = async (data) => {
+    this.insert = (data) => {
         return api.insert(this, data)
     }
 
@@ -82,7 +82,7 @@ const Db = function () {
      * @param limit 批次
      * @returns {Promise<void>}
      */
-    this.insertAll = async (data, limit) => {
+    this.insertAll = (data, limit) => {
         return api.insertAll(this, data, limit)
     }
 
@@ -91,7 +91,7 @@ const Db = function () {
      * @param data 要更新的数据
      * @returns {Promise<*>}
      */
-    this.update = async (data) => {
+    this.update = (data) => {
         return api.update(this, data)
     }
 
@@ -255,8 +255,12 @@ const Db = function () {
      * @note 获取主键字段名
      * @returns {Promise<*|string>}
      */
-    this.getPrimaryKey = async () => {
+    this.getPrimaryKey = () => {
         return api.getPrimaryKey();
+    }
+
+    this.getLastSql = () => {
+        return api.getLastSql()
     }
 
     return this

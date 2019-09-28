@@ -1,3 +1,3 @@
-module.exports = function (mysql, primaryKey) {
+module.exports = (mysql, primaryKey) => {
     mysql.primaryKey = primaryKey
 }

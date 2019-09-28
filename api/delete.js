@@ -1,4 +1,4 @@
-module.exports = function (mysql, pk) {
+module.exports = (mysql, pk) => {
     if (pk != undefined) {
         let id = mysql.getPrimaryKey();
         mysql.sql = 'DELETE FROM ' + '`' + mysql.tableName + '` WHERE `' + id + '` = \'' + pk + '\'';
