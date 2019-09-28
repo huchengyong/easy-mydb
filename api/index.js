@@ -6,6 +6,7 @@ const insertAll = require('./insertAll')
 const query = require('./query')
 const del = require('./delete')
 const getLastSql = require('./getLastSql')
+const getPrimaryKey = require('./getPrimaryKey')
 const release = require('./release')
 const setPrimaryKey = require('./setPrimaryKey')
 
@@ -18,6 +19,7 @@ module.exports = {
     query: (mysql, sql) => query(mysql, sql),
     delete: (mysql) => del(mysql),
     getLastSql: (mysql) => getLastSql(mysql),
+    getPrimaryKey: (mysql) => getPrimaryKey(mysql),
     setPrimaryKey: (mysql, primaryKey) => setPrimaryKey(mysql, primaryKey),
     release: (mysql) => release(mysql)
 }
