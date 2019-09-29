@@ -198,7 +198,7 @@ const Db = function () {
      * @returns {db}
      */
     this.group = (field) => {
-        middle.group(field)
+        middle.group(this, field)
         return this
     }
 
@@ -260,7 +260,7 @@ const Db = function () {
     }
 
     this.getLastSql = () => {
-        return api.getLastSql()
+        return api.getLastSql(this)
     }
 
     return this
@@ -276,25 +276,29 @@ db.connect({
     database: 'test'
 })
 
-// let r1 = db.table('user').where({id:18}).select()
-// let r2 = db.table('user').where({id:19}).select()
-let r3 = db.table('goods').where({id: 1}).find()
-let r4 = db.table('user').find(3)
+async function test() {
+    let r1 = await db.table('user').where([
+        {id: {in: '15,16,17'}},
+        {id: {between: '1,28'}},
+        {name: {like: '%hu%'}}
+    ]).find();
+    console.log(r1);
+    console.log(db.table('user').getLastSql());
+}
+
+test()
 
 // r1.then((d) => {
 //     console.log(d)
 // })
-//
 // r2.then((d) => {
 //     console.log(d)
 // })
-
-r3.then((d) => {
-    console.log(d)
-})
-
-r4.then((d) => {
-    console.log(d)
-})
+// r3.then((d) => {
+//     console.log(d)
+// })
+// r4.then((d) => {
+//     console.log(d)
+// })
 
 db.release()

@@ -9,7 +9,7 @@ const query = require('./query')
 module.exports = (mysql, data) => {
     let wheres = mysql.getWheres();
     lib.setColumns(mysql);
-    lib.dealData(data);
+    lib.dealData(mysql, data);
     let sql = lib.setUpdate(mysql);
     mysql.sql = 'UPDATE `' + mysql.tableName + '` SET ' + sql + wheres;
     return query(mysql.sql);

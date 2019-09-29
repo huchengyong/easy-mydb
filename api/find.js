@@ -8,5 +8,7 @@ module.exports = (mysql, pk) => {
     } else {
         mysql.limit(1)
     }
-    return select(mysql)
+    return select(mysql).then((data) => {
+        return data.length > 0 ? data[0] : {}
+    })
 }

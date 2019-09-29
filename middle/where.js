@@ -30,7 +30,7 @@ module.exports = (mysql, field, op, condition, conjunction) => {
     } else {
         switch (typeof field) {
             case 'object':
-                lib.dealObject(field, conjunction);
+                lib.dealObject(mysql, field, conjunction);
                 break;
             case 'string':
                 mysql.wheres += mysql.wheres == '' ? field : (' ' + conjunction + ' ' + field);

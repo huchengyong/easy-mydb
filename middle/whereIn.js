@@ -9,6 +9,8 @@ module.exports = (mysql, field, condition) => {
     if (condition != undefined) {
         if (typeof condition === 'object') {
             condition = condition.join('\',\'');
+        } else if (typeof condition === 'string') {
+            condition = condition.split(',').join('\',\'');
         }
         let where = '`' + field + '` IN (\'' + condition + '\')';
         mysql.wheres += mysql.wheres == '' ? where : ' AND ' + where;
