@@ -74,7 +74,7 @@ db.table('user').where({id:1}).select() //you will get a Promise object
 ```
 
 ## insert
-This method can insert one data to database
+This method can insert one data to table
 
 ```js
 db.table('user').insert({id:1,name:'root'});
