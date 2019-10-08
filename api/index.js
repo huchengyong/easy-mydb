@@ -15,11 +15,11 @@ module.exports = {
     find: (mysql, pk) => find(mysql, pk),
     getLastSql: (mysql) => getLastSql(mysql),
     getPrimaryKey: (mysql) => getPrimaryKey(mysql),
-    insert: (mysql) => insert(mysql),
-    insertAll: (mysql) => insertAll(mysql),
+    insert: (mysql, data) => insert(mysql, data),
+    insertAll: (mysql, data) => insertAll(mysql, data),
     query: (mysql, sql) => query(mysql, sql),
     release: (mysql) => release(mysql),
     select: (mysql) => select(mysql),
     setPrimaryKey: (mysql, primaryKey) => setPrimaryKey(mysql, primaryKey),
-    update: (mysql) => update(mysql)
+    update: (mysql, data) => update(mysql, data)
 }

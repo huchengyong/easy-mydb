@@ -7,11 +7,11 @@ const lib = require('../lib')
  * @param limit 批次
  * @returns {Promise<void>}
  */
-module.exports = (mysql, data, limit) => {
-    lib.setColumns(mysql);
+module.exports = async (mysql, data, limit) => {
+    await lib.setColumns(mysql);
     if (typeof data === 'object') {
         for (let k in data[0]) {
-            if (lib.inColumns(k)) {
+            if (lib.inColumns(mysql, k)) {
                 mysql.insertFields += mysql.insertFields == '' ? ('(' + '`' + k + '`') : (',`' + k + '`');
             }
         }
@@ -21,7 +21,7 @@ module.exports = (mysql, data, limit) => {
             if (typeof val === 'object') {
                 mysql.insertValues += mysql.insertValues == '' ? '(' : ',(';
                 for (let k in val) {
-                    if (lib.inColumns(k)) {
+                    if (lib.inColumns(mysql, k)) {
                         let v = val[k];
                         mysql.insertValues += '\'' + v + '\',';
                     }
@@ -32,5 +32,5 @@ module.exports = (mysql, data, limit) => {
         }
     }
     mysql.sql = 'INSERT INTO' + ' `' + mysql.tableName + '` ' + mysql.insertFields + ' VALUE ' + mysql.insertValues + '';
-    return query(mysql.sql);
+    return query(mysql, mysql.sql);
 }

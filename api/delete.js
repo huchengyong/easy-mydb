@@ -1,3 +1,5 @@
+const query = require('./query')
+
 module.exports = (mysql, pk) => {
     if (pk != undefined) {
         let id = mysql.getPrimaryKey();
@@ -6,5 +8,5 @@ module.exports = (mysql, pk) => {
         let wheres = mysql.getWheres();
         mysql.sql = 'DELETE FROM ' + '`' + mysql.tableName + '`' + wheres;
     }
-    return query(mysql.sql);
+    return query(mysql, mysql.sql);
 }

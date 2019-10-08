@@ -259,6 +259,10 @@ const Db = function () {
         return api.getPrimaryKey();
     }
 
+    /**
+     * @note 获取最后一条sql语句
+     * @returns {*}
+     */
     this.getLastSql = () => {
         return api.getLastSql(this)
     }
@@ -266,39 +270,3 @@ const Db = function () {
     return this
 }
 module.exports = Db
-
-let db = new Db();
-
-db.connect({
-    host: '127.0.0.1',
-    user: 'root',
-    password: '123456',
-    database: 'test'
-})
-
-async function test() {
-    let r1 = await db.table('user').where([
-        {id: {in: '15,16,17'}},
-        {id: {between: '1,28'}},
-        {name: {like: '%hu%'}}
-    ]).find();
-    console.log(r1);
-    console.log(db.table('user').getLastSql());
-}
-
-test()
-
-// r1.then((d) => {
-//     console.log(d)
-// })
-// r2.then((d) => {
-//     console.log(d)
-// })
-// r3.then((d) => {
-//     console.log(d)
-// })
-// r4.then((d) => {
-//     console.log(d)
-// })
-
-db.release()
