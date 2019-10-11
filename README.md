@@ -10,6 +10,12 @@
 - [update](#update)
 - [delete](#delete)
 - [find](#find)
+- [query](#query)
+- [count](#count)
+- [sum](#sum)
+- [max](#max)
+- [min](#min)
+- [avg](#avg)
 - [where](#where)
 - [whereOr](#whereOr)
 - [field](#field)
@@ -17,12 +23,6 @@
 - [group](#group)
 - [limit](#limit)
 - [distinct](#distinct)
-- [query](#query)
-- [count](#count)
-- [sum](#sum)
-- [max](#max)
-- [min](#min)
-- [avg](#avg)
 - [alias&mJoin](#alias&mJoin)
 - [release](#release)
 
@@ -123,6 +123,37 @@ db.table('user').find(1) // select * from user where uid = 1 limit 1
 // param must be primary key
 ```
 
+## query
+We can use native SQL with this method
+```js
+db.table('user').query('select * from user') // you will get a Promise object
+```
+
+## count
+```js
+db.table('user').count() //select count(*) from user
+```
+
+## sum
+```js
+db.table('user').sum('age') //select sum(age) from user
+```
+
+## max
+```js
+db.table('user').max('id') //select max(id) from user
+```
+
+## min
+```js
+db.table('user').min('id') //select min(id) from user
+```
+
+## avg
+```js
+db.table('user').avg('age') //select avg(age) from user
+```
+
 ## where
 This method can filter some data
 
@@ -175,37 +206,6 @@ db.table('user').limit(0,10).select() //select * from user limit 0,10
 
 ```js
 db.table('user').distinct('name').select() //select distinct name from user;
-```
-
-## query
-We can use native SQL with this method
-```js
-db.table('user').query('select * from user') // you will get a Promise object
-```
-
-## count
-```js
-db.table('user').count() //select count(*) from user
-```
-
-## sum
-```js
-db.table('user').sum('age') //select sum(age) from user
-```
-
-## max
-```js
-db.table('user').max('id') //select max(id) from user
-```
-
-## min
-```js
-db.table('user').min('id') //select min(id) from user
-```
-
-## avg
-```js
-db.table('user').avg('age') //select avg(age) from user
 ```
 
 ## alias&mJoin
