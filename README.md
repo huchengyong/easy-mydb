@@ -18,6 +18,12 @@
 - [limit](#limit)
 - [distinct](#distinct)
 - [query](#query)
+- [count](#count)
+- [sum](#sum)
+- [max](#max)
+- [min](#min)
+- [avg](#avg)
+- [alias&mJoin](#alias&mJoin)
 - [release](#release)
 
 ## Install
@@ -175,6 +181,39 @@ db.table('user').distinct('name').select() //select distinct name from user;
 We can use native SQL with this method
 ```js
 db.table('user').query('select * from user') // you will get a Promise object
+```
+
+## count
+```js
+db.table('user').count() //select count(*) from user
+```
+
+## sum
+```js
+db.table('user').sum('age') //select sum(age) from user
+```
+
+## max
+```js
+db.table('user').max('id') //select max(id) from user
+```
+
+## min
+```js
+db.table('user').min('id') //select min(id) from user
+```
+
+## avg
+```js
+db.table('user').avg('age') //select avg(age) from user
+```
+
+## alias&mJoin
+```js
+db.table('user').alias('u').join('profile p', 'p.uid=u.id').select()
+//select * from user u inner join profile p on p.uid=u.id
+db.table('user').alias('u').join('profile p', 'p.uid=u.id', 'inner'|'left'|'right').select()
+//select * from user u inner|left|right join profile p on p.uid=u.id
 ```
 
 ## release
