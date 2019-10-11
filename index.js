@@ -8,6 +8,10 @@ const Db = function () {
     this.sql = ''
     /*查询要筛选的字段*/
     this.fields = '*'
+    /*当前表别名*/
+    this.aliasStr = ''
+    /*联表查询*/
+    this.joinStr = ''
     /*查询排序*/
     this.orders = ''
     /*查询分组*/
@@ -68,6 +72,50 @@ const Db = function () {
     }
 
     /**
+     * @note 统计数量
+     * @returns {*}
+     */
+    this.count = (field) => {
+        return api.count(this, field)
+    }
+
+    /**
+     * @note 相加
+     * @param field
+     * @returns {*}
+     */
+    this.sum = (field) => {
+        return api.sum(this, field)
+    }
+
+    /**
+     * @note 最大值
+     * @param field
+     * @returns {*}
+     */
+    this.max = (field) => {
+        return api.max(this, field)
+    }
+
+    /**
+     * @note 最小值
+     * @param field
+     * @returns {*}
+     */
+    this.min = (field) => {
+        return api.min(this, field)
+    }
+
+    /**
+     * @note 平均值
+     * @param field
+     * @returns {*}
+     */
+    this.avg = (field) => {
+        return api.avg(this, field)
+    }
+
+    /**
      * @note 插入一条数据
      * @param data 数据 必填
      * @returns {Promise<void>}
@@ -118,6 +166,28 @@ const Db = function () {
      */
     this.field = (fields) => {
         middle.field(this, fields)
+        return this
+    }
+
+    /**
+     * @note 当前表起别称
+     * @param s
+     * @returns {Db}
+     */
+    this.alias = (s) => {
+        middle.alias(this, s)
+        return this
+    }
+
+    /**
+     * @note 联表查询
+     * @param table
+     * @param op
+     * @param method
+     * @returns {Db}
+     */
+    this.mJoin = (table, op, method) => {
+        middle.mJoin(this, table, op, method)
         return this
     }
 
@@ -223,6 +293,17 @@ const Db = function () {
     }
 
     /**
+     * @note 分页查询
+     * @param p
+     * @param offset
+     * @returns {Db}
+     */
+    this.page = (p, offset) => {
+        middle.page(this, p, offset)
+        return this
+    }
+
+    /**
      * @note 这是主键字段
      * @param primaryKey
      */
@@ -270,3 +351,31 @@ const Db = function () {
     return this
 }
 module.exports = Db
+
+const db = new Db()
+let config = {
+    host: '127.0.0.1',
+    user: 'root',
+    password: '123456',
+    database: 'test'
+}
+db.connect(config)
+
+async function test() {
+    console.log(await db
+        .table('user')
+        .field('u.name')
+        .alias('u')
+        .mJoin('goods as g', 'u.id = g.id')
+        .whereBtw('u.id', '1,100')
+        .whereLike('u.name', '%h%')
+        .whereIn('u.id', [1,2,3,4,5,6,7,8,9])
+        .page(1,10)
+        .order('u.id', 'desc')
+        .group('u.id')
+        .select())
+    console.log(await db.table('user').whereBtw('id', '1,3').where({'name':{like:'%h%'}}).whereIn('id', [1,2,3,4,5,6,7,8,9]).order('id', 'desc').group('id').select())
+}
+test()
+
+db.release()

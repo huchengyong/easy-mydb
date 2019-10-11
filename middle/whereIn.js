@@ -5,21 +5,26 @@
  * @param condition IN条件
  * @returns {db}
  */
-module.exports = (mysql, field, condition) => {
+function whereIn (mysql, field, condition) {
     if (condition != undefined) {
         if (typeof condition === 'object') {
-            condition = condition.join('\',\'');
+            condition = condition.join('\',\'')
         } else if (typeof condition === 'string') {
-            condition = condition.split(',').join('\',\'');
+            condition = condition.split(',').join('\',\'')
         }
-        let where = '`' + field + '` IN (\'' + condition + '\')';
-        mysql.wheres += mysql.wheres == '' ? where : ' AND ' + where;
+        field = field.split('.').join('`.`')
+        let where = '`' + field + '` IN (\'' + condition + '\')'
+        mysql.wheres += mysql.wheres == '' ? where : ' AND ' + where
     } else {
         if (typeof field === 'object') {
             for (let k in field) {
-                let v = field[k];
-                mysql.whereIn(k, v);
+                let v = field[k]
+                whereIn(k, v)
             }
         }
     }
+}
+
+module.exports = (mysql, field, condition) => {
+    whereIn(mysql, field, condition)
 }

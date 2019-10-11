@@ -8,21 +8,22 @@ module.exports = (mysql, field, order) => {
     if (order != undefined) {
         if (typeof order === 'object') {
             for (let k in order) {
-                let v = order[k];
-                mysql.order(k, v);
+                let v = order[k]
+                mysql.order(k, v)
             }
         } else if (typeof order === 'string') {
-            let orders = '`' + field + '`' + ' ' + order.toUpperCase();
-            mysql.orders += mysql.orders == '' ? orders : ',' + orders;
+            field = field.split('.').join('`.`')
+            var orders = '`' + field + '`' + ' ' + order.toUpperCase()
+            mysql.orders += mysql.orders == '' ? orders : ',' + orders
         }
     } else {
         if (typeof field === 'object') {
             for (let k in field) {
-                let v = field[k];
-                mysql.order(k, v);
+                let v = field[k]
+                mysql.order(k, v)
             }
         } else {
-            mysql.orders += mysql.orders == '' ? field : ',' + field;
+            mysql.orders += mysql.orders == '' ? field : ',' + field
         }
     }
 }

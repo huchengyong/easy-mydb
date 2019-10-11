@@ -20,12 +20,24 @@ module.exports = (mysql, field, op, condition, conjunction) => {
                 mysql.whereLike(field, condition);
                 break;
             default :
-                let wheres = ' `' + field + '` ' + op + ' \'' + condition + '\'';
+                //如果字段不存在.字符
+                if (field.indexOf('.') == -1) {
+                    var wheres = '`' + field + '` ' + op + ' \'' + condition + '\'';
+                } else {
+                    field = field.split('.')
+                    var wheres = '`' + field[0] + '`.`' + field[1] + '` ' + op + ' \'' + condition + '\'';
+                }
                 mysql.wheres += mysql.wheres == '' ? wheres : (' ' + conjunction + ' ' + wheres);
                 break;
         }
     } else if (op != undefined) {
-        let wheres = ' `' + field + '` = \'' + op + '\'';
+        //如果字段不存在.字符
+        if (field.indexOf('.') == -1) {
+            var wheres = '`' + field + '` = \'' + op + '\'';
+        } else {
+            field = field.split('.')
+            var wheres = '`' + field[0] + '`.`' + field[1] + '` = \'' + op + '\'';
+        }
         mysql.wheres += mysql.wheres == '' ? wheres : (' ' + conjunction + ' ' + wheres);
     } else {
         switch (typeof field) {

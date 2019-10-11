@@ -4,18 +4,24 @@
  * @param condition 条件 选填
  * @returns {db}
  */
-module.exports = (mysql, field, condition) => {
+
+function whereLike (mysql, field, condition) {
     if (condition != undefined) {
         if (typeof condition === 'string') {
-            let where = '`' + field + '` LIKE \'' + condition + '\'';
-            mysql.wheres += mysql.wheres == '' ? where : ' AND ' + where;
+            field = field.split('.').join('`.`')
+            let where = '`' + field + '` LIKE \'' + condition + '\''
+            mysql.wheres += mysql.wheres == '' ? where : ' AND ' + where
         }
     } else {
         if (typeof field === 'object') {
             for (let k in field) {
-                let v = field[k];
-                mysql.whereLike(k, v);
+                let v = field[k]
+                whereLike(k, v)
             }
         }
     }
+}
+
+module.exports = (mysql, field, condition) => {
+    whereLike(mysql, field, condition)
 }
