@@ -351,31 +351,3 @@ const Db = function () {
     return this
 }
 module.exports = Db
-
-const db = new Db()
-let config = {
-    host: '127.0.0.1',
-    user: 'root',
-    password: '123456',
-    database: 'test'
-}
-db.connect(config)
-
-async function test() {
-    console.log(await db
-        .table('user')
-        .field('u.name')
-        .alias('u')
-        .mJoin('goods as g', 'u.id = g.id')
-        .whereBtw('u.id', '1,100')
-        .whereLike('u.name', '%h%')
-        .whereIn('u.id', [1,2,3,4,5,6,7,8,9])
-        .page(1,10)
-        .order('u.id', 'desc')
-        .group('u.id')
-        .select())
-    console.log(await db.table('user').whereBtw('id', '1,3').where({'name':{like:'%h%'}}).whereIn('id', [1,2,3,4,5,6,7,8,9]).order('id', 'desc').group('id').select())
-}
-test()
-
-db.release()

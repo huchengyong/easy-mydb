@@ -16,7 +16,6 @@ module.exports = (mysql, sql) => {
 
     return new Promise((resolve) => {
         mysql.connection.then((connection) => {
-            console.log(sql)
             connection.query(sql, (error, results, fields) => {
                 if (error) {
                     throw error

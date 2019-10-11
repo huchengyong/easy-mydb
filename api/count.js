@@ -1,9 +1,10 @@
 const query = require('./query')
 
 module.exports = (mysql, field) => {
-    let f = field || '*'
-    let wheres = mysql.getWheres();
-    mysql.sql = 'SELECT COUNT(' + f + ') AS res FROM ' + '`' + mysql.tableName + '`' + wheres
+    field = (field && field !== '*') ? '`' + field.split('.').join('`.`') + '`' : '*'
+    mysql.sql = 'SELECT COUNT(' + field + ') AS res FROM ' + '`' + mysql.tableName + '`' + mysql.aliasStr
+        + mysql.joinStr
+        + mysql.getWheres()
     return query(mysql, mysql.sql).then((data) => {
         return data.length ? data[0].res : 0
     })
