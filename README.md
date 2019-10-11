@@ -217,7 +217,7 @@ db.table('user').alias('u').join('profile p', 'p.uid=u.id', 'inner'|'left'|'righ
 ```
 
 ## release
-After use, you muse use the release() method to release resource
+After use, you must use the release() method to release resource
 ```js
 db.release()
 ```
