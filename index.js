@@ -28,6 +28,8 @@ const Db = function () {
     this.insertFields = ''
     /*添加/更新的值*/
     this.insertValues = ''
+    /*更新操作的表达式*/
+    this.updateExp = ''
     this.tableName = ''
     this.connection = null
     this.configs = {}
@@ -141,6 +143,36 @@ const Db = function () {
      */
     this.update = (data) => {
         return api.update(this, data)
+    }
+
+    /**
+     * 字段自减
+     * @param field
+     * @param value
+     * @returns {*}
+     */
+    this.setDec = (field, value) => {
+        return api.setDec(this, field, value)
+    }
+
+    /**
+     * 字段自增
+     * @param field
+     * @param value
+     * @returns {*}
+     */
+    this.setInc = (field, value) => {
+        return api.setInc(this, field, value)
+    }
+
+    /**
+     * 更新字段
+     * @param field
+     * @param value
+     * @returns {*}
+     */
+    this.setField = (field, value) => {
+        return api.setField(this, field, value)
     }
 
     /**
@@ -304,6 +336,39 @@ const Db = function () {
     }
 
     /**
+     * 自减
+     * @param field
+     * @param value
+     * @returns {Db}
+     */
+    this.dec = (field, value) => {
+        middle.dec(this, field, value)
+        return this
+    }
+
+    /**
+     * 自增
+     * @param field
+     * @param value
+     * @returns {Db}
+     */
+    this.inc = (field, value) => {
+        middle.inc(this, field, value)
+        return this
+    }
+
+    /**
+     * 表达式
+     * @param field
+     * @param value
+     * @returns {Db}
+     */
+    this.exp = (field, value) => {
+        middle.exp(this, field, value)
+        return this
+    }
+
+    /**
      * @note 这是主键字段
      * @param primaryKey
      */
@@ -337,7 +402,7 @@ const Db = function () {
      * @returns {Promise<*|string>}
      */
     this.getPrimaryKey = () => {
-        return api.getPrimaryKey();
+        return api.getPrimaryKey(this);
     }
 
     /**

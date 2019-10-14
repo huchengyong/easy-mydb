@@ -28,6 +28,9 @@
 - [page (v2.1.0)](#page)
 - [distinct](#distinct)
 - [alias&mJoin (v2.1.0)](#alias&mJoin)
+- [dec (v2.2.0)](#dec)
+- [inc (v2.2.0)](#inc)
+- [exp (v2.2.0)](#exp)
 - [release](#release)
 
 ## Install
@@ -109,7 +112,7 @@ db.table('user').where({id:1}).update({name:'root1'});
 ```js
 db.table('user').where({id:1}).delete();
 //Or
-db.table('user').delete(1);
+db.table('user').delete(1); //v2.2.0 Fix known bugs
 // 1 must be primary key, if the table primary key is not 'id', you can use
 // db.setPrimaryKey('uid') method
 ```
@@ -239,6 +242,28 @@ db.table('user').alias('u').join('profile p', 'p.uid=u.id').where({'u.id':1}).se
 //select * from user u inner join profile p on p.uid=u.id where u.id = 1
 db.table('user').alias('u').join('profile p', 'p.uid=u.id', 'inner'|'left'|'right').select()
 //select * from user u inner|left|right join profile p on p.uid=u.id
+```
+
+## dec
+```js
+db.table('user').dec('age').where({id: 1}).update() // update user set age = age - 1 where id = 1
+db.table('user').dec('age', 3).where({id: 1}).update() // update user set age = age - 3 where id = 1
+db.table('user').dec({age: 3, sex: 2}).where({id: 1}).update() // update user set age = age - 3,sex = sex - 2 where id = 1
+```
+
+## inc
+```js
+db.table('user').inc('age').where({id: 1}).update() // update user set age = age + 1 where id = 1
+db.table('user').inc('age', 3).where({id: 1}).update() // update user set age = age + 3 where id = 1
+db.table('user').inc({age: 3, sex: 2}).where({id: 1}).update() // update user set age = age + 3,sex = sex + 2 where id = 1
+```
+
+## exp
+```js
+db.table('user').exp('name', 'root').where({id: 1}).update()
+// update user set name = 'root' where id = 1
+db.table('user').exp({name: 'UPPER(root)'}).where({id: 1}).update()
+// update user set name = UPPER('root') where id = 1
 ```
 
 ## release

@@ -13,12 +13,15 @@ const release = require('./release')
 const select = require('./select')
 const setPrimaryKey = require('./setPrimaryKey')
 const sum = require('./sum')
+const setDec = require('./setDec')
+const setField = require('./setField')
+const setInc = require('./setInc')
 const update = require('./update')
 
 module.exports = {
     avg: (mysql, field) => avg(mysql, field),
     count: (mysql, field) => count(mysql, field),
-    delete: (mysql) => del(mysql),
+    delete: (mysql, pk) => del(mysql, pk),
     find: (mysql, pk) => find(mysql, pk),
     getLastSql: (mysql) => getLastSql(mysql),
     getPrimaryKey: (mysql) => getPrimaryKey(mysql),
@@ -31,5 +34,8 @@ module.exports = {
     select: (mysql) => select(mysql),
     setPrimaryKey: (mysql, primaryKey) => setPrimaryKey(mysql, primaryKey),
     sum: (mysql, field) => sum(mysql, field),
+    setDec: (mysql, field, value) => setDec(mysql, field, value),
+    setField: (mysql, field, value) => setField(mysql, field, value),
+    setInc: (mysql, field, value) => setInc(mysql, field, value),
     update: (mysql, data) => update(mysql, data)
 }
