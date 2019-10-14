@@ -130,7 +130,7 @@ db.table('user').find(1) // select * from user where uid = 1 limit 1
 ## query
 We can use native SQL with this method
 ```js
-db.table('user').query('select * from user') // you will get a Promise object
+db.query('select * from user') // you will get a Promise object
 ```
 
 ## count
