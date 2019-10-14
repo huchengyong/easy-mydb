@@ -11,19 +11,23 @@
 - [delete](#delete)
 - [find](#find)
 - [query](#query)
-- [count](#count)
-- [sum](#sum)
-- [max](#max)
-- [min](#min)
-- [avg](#avg)
+- [count (v2.1.0)](#count)
+- [sum (v2.1.0)](#sum)
+- [max (v2.1.0)](#max)
+- [min (v2.1.0)](#min)
+- [avg (v2.1.0)](#avg)
+- [setInc (v2.2.0)](#setInc)
+- [setDec (v2.2.0)](#setDec)
+- [setField (v2.2.0)](#setField)
 - [where](#where)
 - [whereOr](#whereOr)
 - [field](#field)
 - [order](#order)
 - [group](#group)
 - [limit](#limit)
+- [page (v2.1.0)](#page)
 - [distinct](#distinct)
-- [alias&mJoin](#alias&mJoin)
+- [alias&mJoin (v2.1.0)](#alias&mJoin)
 - [release](#release)
 
 ## Install
@@ -90,7 +94,7 @@ db.table('user').insert({id:1,name:'root'});
 ## insertAll
 
 ```js
-db.table('user').insertAll([{id:1,username:'root'},{id:2,username:'admin'}])
+db.table('user').insertAll([{id:1,name:'root'},{id:2,name:'admin'}])
 ```
 
 ## update
@@ -154,6 +158,23 @@ db.table('user').min('id') //select min(id) from user
 db.table('user').avg('age') //select avg(age) from user
 ```
 
+## setInc
+```js
+db.table('user').where({id:1}).setInc('age') //update `user`  set `age` = `age` + 1  where  `id` = 1
+db.table('user').where({id:1}).setInc('age',2) //update `user`  set `age` = `age` + 2  where  `id` = 1 
+```
+
+## setDec
+```js
+db.table('user').where({id:1}).setDec('age') //update `user`  set `age` = `age` - 1  where  `id` = 1
+db.table('user').where({id:1}).setDec('age',2) //update `user`  set `age` = `age` - 2  where  `id` = 1
+```
+
+## setField
+```js
+db.table('user').where({id:1}).setField('age','24') //update user set age = 24 where id = 1
+```
+
 ## where
 This method can filter some data
 
@@ -185,13 +206,11 @@ db.table('user').field('id,name').select() // select id,name from user
 ```
 
 ## order
-
 ```js
 db.table('user').order({id:'desc'}).select() //select * from user order by id desc
 ```
 
 ## group
-
 ```js
 db.table('user').group('id').select() // select * from user group by id
 ```
@@ -202,16 +221,22 @@ db.table('user').group('id').select() // select * from user group by id
 db.table('user').limit(0,10).select() //select * from user limit 0,10
 ```
 
-## distinct
+## page
+```js
+db.table('user').page(1,10).select() //select * from user limit 0,10
+db.table('user').page(2,10).select() //select * from user limit 10,10
+db.table('user').page(3,10).select() //select * from user limit 20,10
+```
 
+## distinct
 ```js
 db.table('user').distinct('name').select() //select distinct name from user;
 ```
 
 ## alias&mJoin
 ```js
-db.table('user').alias('u').join('profile p', 'p.uid=u.id').select()
-//select * from user u inner join profile p on p.uid=u.id
+db.table('user').alias('u').join('profile p', 'p.uid=u.id').where({'u.id':1}).select()
+//select * from user u inner join profile p on p.uid=u.id where u.id = 1
 db.table('user').alias('u').join('profile p', 'p.uid=u.id', 'inner'|'left'|'right').select()
 //select * from user u inner|left|right join profile p on p.uid=u.id
 ```
