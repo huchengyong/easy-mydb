@@ -1,6 +1,6 @@
 {
   "name": "easy-mydb",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "easy for mysql",
   "main": "index.js",
   "dependencies": {
