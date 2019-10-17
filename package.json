@@ -15,7 +15,10 @@
     "url": "git@github.com:huchengyong/easy-mydb.git"
   },
   "keywords": [
-    "mysql"
+    "mysql",
+    "easy",
+    "mydb",
+    "easy-mydb"
   ],
   "author": "timesnewroman",
   "license": "ISC"
