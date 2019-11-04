@@ -4,6 +4,7 @@ module.exports = (mysql, configs) => {
     if (typeof configs !== 'object') throw 'Connection failed. Please check configuration parameters'
 
     mysql.configs = configs
+    mysql.prefix = configs.prefix || ''
 
     if (mysql.connection === null) {
         const pool = db.createPool({

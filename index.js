@@ -3,6 +3,7 @@ const middle = require('./middle')
 
 const Db = function () {
 
+    this.configs = {}
     this.prefix = ''
     /*最终的sql语句*/
     this.sql = ''
@@ -32,7 +33,6 @@ const Db = function () {
     this.updateExp = ''
     this.tableName = ''
     this.connection = null
-    this.configs = {}
     this.primaryKey = 'id'
 
     /**
