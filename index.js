@@ -67,7 +67,7 @@ class EasyMydb {
      */
     loadApi() {
         R.forEachObjIndexed((v, k) => {
-            this[k] = v
+            this[k] = v.bind(this)
         })(api)
     }
 
@@ -76,7 +76,7 @@ class EasyMydb {
      */
     loadMiddle() {
         R.forEachObjIndexed((v, k) => {
-            this[k] = v
+            this[k] = v.bind(this)
         })(middle)
     }
 
