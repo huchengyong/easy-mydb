@@ -4,7 +4,8 @@
   "description": "easy for mysql",
   "main": "index.js",
   "dependencies": {
-    "mysql": "^2.17.1"
+    "mysql": "^2.17.1",
+    "ramda": "^0.26.1"
   },
   "devDependencies": {},
   "scripts": {
