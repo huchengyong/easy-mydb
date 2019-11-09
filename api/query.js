@@ -1,28 +1,22 @@
-module.exports = (mysql, sql) => {
-    if (mysql.tableName === '')
-        throw 'Undefined tableName. Please use table() define tableName'
+module.exports = async (_instance, maps) => {
+    const [sql] = maps
+    _instance.options.sql = sql
+    if (_instance.schemaName === '')
+        throw 'Undefined schemaName. Please use table() or model() method first'
 
-    /*执行结束后初始化数据*/
-    mysql.fields = '*';
-    mysql.orders = '';
-    mysql.groups = '';
-    mysql.distincts = '';
-    mysql.wheres = '';
-    mysql.insertFields = '';
-    mysql.insertValues = '';
-    mysql.aliasStr = '';
-    mysql.joinStr = '';
-    mysql.limits = '';
-
-    return new Promise((resolve) => {
-        mysql.connection.then((connection) => {
-            connection.query(sql, (error, results, fields) => {
-                if (error) {
-                    throw error
-                } else {
+    //fetch sql
+    if (_instance.options.isSql === true) {
+        _instance.options.isSql = null
+        return _instance.options.sql
+    } else {
+        return new Promise((resolve, reject) => {
+            _instance.connection.then((connection) => {
+                connection.query(_instance.options.sql, (error, results, fields) => {
+                    connection.release()
+                    if (error) reject(error)
                     resolve(eval('(' + JSON.stringify(results) + ')'))
-                }
-            });
+                })
+            })
         })
-    })
+    }
 }

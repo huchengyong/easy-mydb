@@ -6,8 +6,6 @@ const mysql = require('mysql')
 class EasyMydb {
     constructor(dbConfig, tableName) {
         this.options = new Object()
-        // this.loadApi()
-        // this.loadMiddle()
         this.connect(dbConfig)
         this.formatModelToSchema(tableName)
     }
@@ -18,31 +16,9 @@ class EasyMydb {
      * @returns {EasyMydb}
      */
     model(tableName) {
+        this.loadApi()
+        // this.loadMiddle()
         return new EasyMydb(this.dbConfig, tableName)
-    }
-
-    async query(sql) {
-        return await this.getQuery(sql)
-    }
-
-    getQuery(sql) {
-        const _this = this
-        this.options.sql = sql
-
-        //fetch sql
-        if (this.options.isSql === true) {
-            this.options.isSql = null
-            return this.options.sql
-        } else {
-            return new Promise((resolve, reject) => {
-                _this.connection.query(_this.options.sql, (error, results, fields) => {
-                    this.connection.release()
-                    if (error) reject(error)
-                    console.log(fields)
-                    resolve(eval('(' + JSON.stringify(results) + ')'))
-                })
-            })
-        }
     }
 
     /**
@@ -59,7 +35,7 @@ class EasyMydb {
             password: this.dbConfig.password || '',
             database: this.dbConfig.database || ''
         })
-        this.connection = await this.getConnection()
+        this.connection = this.getConnection()
     }
 
     /**
@@ -67,7 +43,7 @@ class EasyMydb {
      */
     loadApi() {
         R.forEachObjIndexed((v, k) => {
-            this[k] = v.bind(this)
+            this[k] = (...map) => v(this, map)
         })(api)
     }
 
@@ -76,7 +52,7 @@ class EasyMydb {
      */
     loadMiddle() {
         R.forEachObjIndexed((v, k) => {
-            this[k] = v.bind(this)
+            this[k] = (...map) => v(this, map)
         })(middle)
     }
 
@@ -95,16 +71,19 @@ class EasyMydb {
      * @param schemaName
      */
     table(schemaName, isPrefix) {
+        this.loadApi()
+        // this.loadMiddle()
         this.options.schemaName = isPrefix ? (this.dbConfig.prefix || '') + schemaName : schemaName
+        return this
     }
 
     /**
      * get mysql connection
      * @returns {Promise<any>}
      */
-    getConnection() {
+    async getConnection() {
         const _this = this
-        return new Promise((resolve, reject) => {
+        return await new Promise((resolve, reject) => {
             _this.pool.getConnection((err, connection) => {
                 if (err) reject(err)
                 resolve(connection)
@@ -133,12 +112,11 @@ class EasyMydb {
     }
 }
 
-const config = {host: '127.0.0.1',user: 'root', password: '123456', database: 'test', prefix: 'ely_'}
+const config = {host: '127.0.0.1',user: 'root', password: 'root', database: 'bearly.cn', prefix: 'ely_'}
 const db = new EasyMydb(config)
-db.table('ug')
-const User = db.model('User')
-const Goods = db.model('Goods')
+var test = db.table('group').query('select * from ely_group')
+test.then((data) => {
+    console.log(data)
+})
 
-console.log(db)
-console.log(User)
-console.log(Goods)
+
