@@ -1,12 +1,7 @@
-const query = require('./query');
-
-module.exports = (mysql) => {
-    mysql.sql = 'SELECT ' + (mysql.distincts != '' ? mysql.distincts : mysql.fields)
-        + ' FROM `' + mysql.tableName + '` '
-        + mysql.aliasStr
-        + mysql.joinStr
-        + mysql.getWheres() + ' ' + mysql.groups + ' '
-        + mysql.getOrders()
-        + mysql.getLimits()
-    return query(mysql, mysql.sql)
+const R = require('ramda')
+module.exports = (_instance) => {
+    _instance.options.sql = 'SELECT ' 
+    + (_instance.options.distincts ?: _instance.options.fields) 
+    + _instance.getSelectSql()
+    return _instance.query(_instance.options.sql)
 }

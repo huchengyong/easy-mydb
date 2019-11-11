@@ -1,11 +1,12 @@
-const query = require('./query')
+const R = require('ramda')
 
-module.exports = (mysql, field) => {
-    field = field.split('.').join('`.`')
-    mysql.sql = 'SELECT SUM(`' + field + '`) AS res FROM ' + '`' + mysql.tableName + '`' + mysql.aliasStr
-        + mysql.joinStr
-        + mysql.getWheres()
-    return query(mysql, mysql.sql).then((data) => {
-        return data.length ? data[0].res : 0
+module.exports = (_instance, maps) => {
+	const [ field ] = maps
+
+    _instance.sql = 'SELECT SUM(`' + R.replace('.')('`.`')(field) + '`) AS res FROM '
+    + _instance.getSelectSql()
+
+    return _instance.query(_instance.sql).then((data) => {
+        return data && data.length ? data[0].res : 0
     })
 }

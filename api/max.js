@@ -1,11 +1,9 @@
-const query = require('./query')
-
-module.exports = (mysql, field) => {
-    field = field.split('.').join('`.`')
-    mysql.sql = 'SELECT MAX(`' + field + '`) AS res FROM ' + '`' + mysql.tableName + '`' + mysql.aliasStr
-        + mysql.joinStr
-        + mysql.getWheres()
-    return query(mysql, mysql.sql).then((data) => {
-        return data.length ? data[0].res : 0
+const R = require('ramda')
+module.exports = (_instance, maps) => {
+	const [ field ] = maps
+    _instance.options.sql = 'SELECT MAX(`' + R.replace('.')('`.`')(field) + '`) AS res '
+    + _instance.getSelectSql()
+    return _instance.query(_instance.options.sql).then((data) => {
+        return data && data.length ? data[0].res : 0
     })
 }

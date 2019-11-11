@@ -16,8 +16,8 @@ class EasyMydb {
      * @returns {EasyMydb}
      */
     model(tableName) {
+        this.loadMiddle()
         this.loadApi()
-        // this.loadMiddle()
         return new EasyMydb(this.dbConfig, tableName)
     }
 
@@ -63,7 +63,7 @@ class EasyMydb {
      */
     formatModelToSchema(modelName) {
         if (modelName)
-            this.options.schemaName = this.options.schemaName || ((this.dbConfig.prefix || '') + R.replace(/[_]+/g, '_')(R.toLower(R.replace(/\B([A-Z])/g, '_$1')(modelName))))
+            this.schemaName = this.schemaName || ((this.dbConfig.prefix || '') + R.replace(/[_]+/g, '_')(R.toLower(R.replace(/\B([A-Z])/g, '_$1')(modelName))))
     }
 
     /**
@@ -71,9 +71,9 @@ class EasyMydb {
      * @param schemaName
      */
     table(schemaName, isPrefix) {
+        this.loadMiddle()
         this.loadApi()
-        // this.loadMiddle()
-        this.options.schemaName = isPrefix ? (this.dbConfig.prefix || '') + schemaName : schemaName
+        this.schemaName = isPrefix ? (this.dbConfig.prefix || '') + schemaName : schemaName
         return this
     }
 
@@ -100,8 +100,30 @@ class EasyMydb {
         return this
     }
 
+    getSelectSql() {
+        return ' FROM `' + _instance.schemaName + '` '
+        + _instance.options.aliasStr
+        + _instance.options.joinStr
+        + _instance.getWheres() + ' ' + _instance.options.groups + ' '
+        + _instance.getOrders()
+        + _instance.getLimits()
+    }
+
+    getWheres() {
+        this.options.wheres = R.replace(/\s+/g)(' ')(this.options.wheres)
+        return !this.options.wheres ? ' WHERE ' + this.options.wheres : ''
+    }
+
+    getOrders() {
+        return !this.options.orders ? ' ORDER BY ' + this.options.orders : ''
+    }
+
+    getLimits() {
+        return !this.options.limits ? ' LIMIT ' + this.options.limits : ''
+    }
+
     getLastSql() {
-        return this.options.sql
+        return R.replace(/\s+/g)(' ')(this.options.sql)
     }
 
     /**

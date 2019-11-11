@@ -1,14 +1,13 @@
-const select = require('./select')
-
-module.exports = (mysql, pk) => {
-    if (pk != undefined) {
+module.exports = (_instance, maps) => {
+    const [ pk ] = maps
+    if (pk) {
         let where = {}
-        where[mysql.primaryKey] = pk
-        mysql.where(where).limit(1)
+        where[_instance.primaryKey] = pk
+        _instance.where(where).limit(1)
     } else {
-        mysql.limit(1)
+        _instance.limit(1)
     }
-    return select(mysql).then((data) => {
-        return data.length > 0 ? data[0] : {}
+    return _instance.select().then((data) => {
+        return data && data.length > 0 ? data[0] : {}
     })
 }

@@ -1,6 +1,6 @@
 module.exports = async (_instance, maps) => {
-    const [sql] = maps
-    _instance.options.sql = sql
+    const [ sql ] = maps
+    _instance.options.sql = sql ?: ''
     if (_instance.schemaName === '')
         throw 'Undefined schemaName. Please use table() or model() method first'
 

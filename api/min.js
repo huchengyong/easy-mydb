@@ -1,11 +1,11 @@
-const query = require('./query')
+const R = require('ramda')
+module.exports = (_instance, maps) => {
+	const [ field ] = maps
 
-module.exports = (mysql, field) => {
-    field = field.split('.').join('`.`')
-    mysql.sql = 'SELECT MIN(`' + field + '`) AS res FROM ' + '`' + mysql.tableName + '`' + mysql.aliasStr
-        + mysql.joinStr
-        + mysql.getWheres()
-    return query(mysql, mysql.sql).then((data) => {
+    _instance.sql = 'SELECT MIN(`' + R.replace('.')('`.`')(field) + '`) AS res '
+    + _instance.getSelectSql()
+
+    return _instance.query(_instance.sql).then((data) => {
         return data.length ? data[0].res : 0
     })
 }

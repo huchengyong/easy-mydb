@@ -1,16 +1,11 @@
-/**
- * @note 分组
- * @param field 字段名
- * @returns {db}
- */
-module.exports = (mysql, field) => {
+const R = require('ramda')
+module.exports = (_instance, maps) => {
+	const [ field ] = maps
     if (typeof field === 'string' && field != '') {
-        let groups = field.split(',')
+        let groups = R.replace(',')('`,`')(field)
+        groups = !groups ? '`' + groups + '`' : ''
+        groups = R.replace('.')('`.`')(groups)
 
-        groups = groups.join('`,`')
-        groups = groups == '' ? '' : ('`' + groups + '`')
-        groups = groups.split('.').join('`.`')
-
-        mysql.groups = ' GROUP BY ' + groups
+        _instance.options.groups = ' GROUP BY ' + groups
     }
 }
