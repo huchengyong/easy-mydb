@@ -43,7 +43,7 @@ class EasyMydb {
      */
     loadApi() {
         R.forEachObjIndexed((v, k) => {
-            this[k] = (...map) => v(this, map)
+            this[k] = (...maps) => v(this, maps)
         })(api)
     }
 
@@ -52,7 +52,7 @@ class EasyMydb {
      */
     loadMiddle() {
         R.forEachObjIndexed((v, k) => {
-            this[k] = (...map) => v(this, map)
+            this[k] = (...maps) => v(this, maps)
         })(middle)
     }
 
@@ -70,10 +70,10 @@ class EasyMydb {
      * define a schema name if model name is not the schema name
      * @param schemaName
      */
-    table(schemaName, isPrefix) {
+    table(schemaName) {
         this.loadMiddle()
         this.loadApi()
-        this.schemaName = isPrefix ? (this.dbConfig.prefix || '') + schemaName : schemaName
+        this.schemaName = (this.dbConfig.prefix || '') + schemaName
         return this
     }
 
@@ -96,34 +96,34 @@ class EasyMydb {
      * @returns {EasyMydb}
      */
     fetchSql() {
-        this.options.isSql = true
+        this.isSql = true
         return this
     }
 
     getSelectSql() {
-        return ' FROM `' + _instance.schemaName + '` '
-        + _instance.options.aliasStr
-        + _instance.options.joinStr
-        + _instance.getWheres() + ' ' + _instance.options.groups + ' '
-        + _instance.getOrders()
-        + _instance.getLimits()
+        return ' FROM `' + this.schemaName + '` '
+        + (this.options.aliasStr || '')
+        + (this.options.joinStr || '')
+        + this.getWheres() + ' ' + (this.options.groups || '') + ' '
+        + this.getOrders()
+        + this.getLimits()
     }
 
     getWheres() {
-        this.options.wheres = R.replace(/\s+/g)(' ')(this.options.wheres)
-        return !this.options.wheres ? ' WHERE ' + this.options.wheres : ''
+        this.options.wheres = R.replace(/\s+/g)(' ')(this.options.wheres || '')
+        return !this.options.wheres ? '' : ' WHERE ' + this.options.wheres
     }
 
     getOrders() {
-        return !this.options.orders ? ' ORDER BY ' + this.options.orders : ''
+        return !this.options.orders ? '' : ' ORDER BY ' + this.options.orders
     }
 
     getLimits() {
-        return !this.options.limits ? ' LIMIT ' + this.options.limits : ''
+        return !this.options.limits ? '' : ' LIMIT ' + this.options.limits
     }
 
     getLastSql() {
-        return R.replace(/\s+/g)(' ')(this.options.sql)
+        return R.replace(/\s+/g)(' ')(this.sql || '')
     }
 
     /**
@@ -134,9 +134,9 @@ class EasyMydb {
     }
 }
 
-const config = {host: '127.0.0.1',user: 'root', password: 'root', database: 'bearly.cn', prefix: 'ely_'}
+const config = {host: '127.0.0.1',user: 'root', password: '123456', database: 'bearly.cn', prefix: 'ely_'}
 const db = new EasyMydb(config)
-var test = db.table('group').query('select * from ely_group')
+var test = db.table('group').select()
 test.then((data) => {
     console.log(data)
 })

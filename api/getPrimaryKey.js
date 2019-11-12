@@ -1,5 +1,3 @@
-const query = require('./query')
-
 module.exports = async (_instance) => {
     let sql = "SELECT " +
         "k.column_name " +

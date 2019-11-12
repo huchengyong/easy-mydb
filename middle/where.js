@@ -1,46 +1,46 @@
-const lib = require('../lib')
-
-module.exports = (mysql, field, op, condition, conjunction) => {
+const dealObject = require('../lib/dealObject')
+module.exports = (_instance, maps) => {
+    const [ field, op, condition, conjunction ] = maps
     if (op != undefined && condition != undefined) {
         switch (op.toUpperCase()) {
             case 'IN':
                 if (typeof condition === 'object') {
-                    mysql.whereIn(field, condition);
+                    _instance.whereIn(field, condition)
                 } else if (typeof condition === 'string') {
-                    condition = condition.split(',');
-                    mysql.whereIn(field, condition);
+                    let cn = condition.split(',');
+                    _instance.whereIn(field, cn)
                 }
                 break;
             case 'BETWEEN':
                 if (typeof condition === 'object') {
-                    mysql.whereBtw(field, condition);
+                    _instance.whereBtw(field, condition)
                 }
                 break;
             case 'LIKE':
-                mysql.whereLike(field, condition);
+                _instance.whereLike(field, condition)
                 break;
             default :
                 //如果字段不存在.字符
-                field = field.split('.').join('`.`')
-                let wheres = '`' + field + '` ' + op + ' \'' + condition + '\''
-                mysql.wheres += mysql.wheres == '' ? wheres : (' ' + conjunction + ' ' + wheres);
+                let fd = field.split('.').join('`.`')
+                let wheres = '`' + fd + '` ' + op + ' \'' + condition + '\''
+                _instance.options.wheres += !_instance.options.wheres ? ' ' + conjunction + ' ' + wheres : wheres
                 break;
         }
     } else if (op != undefined) {
         //如果字段不存在.字符
-        field = field.split('.').join('`.`')
-        let wheres = '`' + field + '` = \'' + op + '\''
-        mysql.wheres += mysql.wheres == '' ? wheres : (' ' + conjunction + ' ' + wheres);
+        let fd = field.split('.').join('`.`')
+        let wheres = '`' + fd + '` = \'' + op + '\''
+        _instance.options.wheres += !_instance.options.wheres ? ' ' + conjunction + ' ' + wheres : wheres
     } else {
         switch (typeof field) {
             case 'object':
-                lib.dealObject(mysql, field, conjunction);
+                dealObject(_instance, field, conjunction);
                 break;
             case 'string':
-                mysql.wheres += mysql.wheres == '' ? field : (' ' + conjunction + ' ' + field);
+                _instance.options.wheres += !_instance.options.wheres ? ' ' + conjunction + ' ' + field : field
                 break;
             default:
-                mysql.wheres += '';
+                _instance.options.wheres += ''
                 break;
         }
     }

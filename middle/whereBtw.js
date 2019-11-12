@@ -1,15 +1,10 @@
-/**
- * @note whereBetween条件
- * @param field 字段名 必填
- * @param condition between条件 选填
- * @returns {db}
- */
-function whereBtw(mysql, field, condition) {
-    if (condition != undefined) {
-        if (typeof condition === 'string') condition = condition.split(',')
-        field = field.split('.').join('`.`')
+const R = require('ramda')
+function whereBtw(_instance, field, condition) {
+    if (condition) {
+        if (typeof condition === 'string') condition = R.split(',')(condition)
+        field = R.replace('.')('`.`')(field)
         let where = '`' + field + '` BETWEEN \'' + condition[0] + '\' AND \'' + condition[1] + '\''
-        mysql.wheres += mysql.wheres == '' ? where : ' AND ' + where
+        _instance.options.wheres += !_instance.options.wheres ? ' AND ' + where : where
     } else {
         if (typeof field === 'object') {
             for (let k in field) {
@@ -20,6 +15,7 @@ function whereBtw(mysql, field, condition) {
     }
 }
 
-module.exports = (mysql, field, condition) => {
-    whereBtw(mysql, field, condition)
+module.exports = (_instance, maps) => {
+    const [ field, condition ] = maps
+    whereBtw(_instance, field, condition)
 }

@@ -8,5 +8,7 @@ module.exports = (_instance, maps) => {
             throw 'Lack of renewal conditions'
         _instance.sql = 'DELETE FROM ' + '`' + _instance.schemaName + '`' + wheres
     }
-    return _instance.query(_instance.options.sql);
+    return _instance.query(_instance.sql).then((data) => {
+        return !data.affectedRows ? false : true
+    })
 }

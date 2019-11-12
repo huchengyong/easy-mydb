@@ -1,20 +1,14 @@
-/**
- *
- * @note whereIn条件
- * @param field 字段名
- * @param condition IN条件
- * @returns {db}
- */
-function whereIn (mysql, field, condition) {
-    if (condition != undefined) {
+const R = require('ramda')
+function whereIn (_instance, field, condition) {
+    if (condition) {
         if (typeof condition === 'object') {
-            condition = condition.join('\',\'')
+            condition = R.join('\',\'')(condition)
         } else if (typeof condition === 'string') {
-            condition = condition.split(',').join('\',\'')
+            condition = R.replace(',')('\',\'')(condition)
         }
-        field = field.split('.').join('`.`')
+        field = R.replace('.')('`.`')(field)
         let where = '`' + field + '` IN (\'' + condition + '\')'
-        mysql.wheres += mysql.wheres == '' ? where : ' AND ' + where
+        _instance.options.wheres += !_instance.options.wheres ? ' AND ' + where : where
     } else {
         if (typeof field === 'object') {
             for (let k in field) {
@@ -25,6 +19,7 @@ function whereIn (mysql, field, condition) {
     }
 }
 
-module.exports = (mysql, field, condition) => {
-    whereIn(mysql, field, condition)
+module.exports = (_instance, maps) => {
+    const [ field, condition ] = maps
+    whereIn(_instance, field, condition)
 }

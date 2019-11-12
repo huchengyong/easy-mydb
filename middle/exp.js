@@ -1,4 +1,4 @@
-function deal(mysql, field, value) {
+function deal(_instance, field, value) {
     if (field != undefined && value != undefined) {
         var patt = new RegExp(/^[A-Za-z0-9]+\((.*)\)$/)
         if (patt.test(value)) {
@@ -8,23 +8,24 @@ function deal(mysql, field, value) {
             var updateExp = '`' + field + '`' + ' = \'' + value + '\''
         }
 
-        mysql.updateExp += mysql.updateExp == '' ? updateExp : (',' + updateExp)
+        _instance.options.updateExp += !_instance.options.updateExp ? ',' + updateExp : updateExp
     } else if (field != undefined) {
         if (typeof field === 'object') {
             for (let k in field) {
                 let v = field[k]
                 if (typeof v === 'object') {
-                    deal(mysql, v)
+                    deal(_instance, v)
                 } else {
-                    deal(mysql, k, v)
+                    deal(_instance, k, v)
                 }
             }
         } else {
-            deal(mysql, field, '')
+            deal(_instance, field, '')
         }
     }
 }
 
-module.exports = (mysql, field, value) => {
-    deal(mysql, field, value)
+module.exports = (_instance, maps) => {
+    const [ field, value ] = maps
+    deal(_instance, field, value)
 }

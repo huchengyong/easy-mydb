@@ -1,36 +1,39 @@
-const query = require('./query')
 const lib = require('../lib')
-
-/**
- * @note 批量插入数据
- * @param data
- * @param limit 批次
- * @returns {Promise<void>}
- */
-module.exports = async (mysql, data, limit) => {
-    await lib.setColumns(mysql);
-    if (typeof data === 'object') {
-        for (let k in data[0]) {
-            if (lib.inColumns(mysql, k)) {
-                mysql.insertFields += mysql.insertFields == '' ? ('(' + '`' + k + '`') : (',`' + k + '`');
-            }
-        }
-        mysql.insertFields += ')';
-        for (let key in data) {
-            let val = data[key];
-            if (typeof val === 'object') {
-                mysql.insertValues += mysql.insertValues == '' ? '(' : ',(';
-                for (let k in val) {
-                    if (lib.inColumns(mysql, k)) {
-                        let v = val[k];
-                        mysql.insertValues += '\'' + v + '\',';
-                    }
-                }
-                let f = mysql.insertValues.substr(0, mysql.insertValues.lastIndexOf(',') - 1) + '\'';
-                mysql.insertValues = f + ')';
-            }
-        }
+const R = require('ramda')
+module.exports = async (_instance, data, limit) => {
+    if (_instance.allowField == true) {
+        await lib.setColumns(_instance)
     }
-    mysql.sql = 'INSERT INTO' + ' `' + mysql.tableName + '` ' + mysql.insertFields + ' VALUE ' + mysql.insertValues + '';
-    return query(mysql, mysql.sql);
+
+    const total = data.length
+    const pages = limit ? Math.ceil(total / (limit || 1)) : 1
+
+    for (let page = 0; page < pages; page++) {
+        data = limit ? R.slice(page * limit)(limit)(data) : data
+        if (typeof data === 'object') {
+            for (let k in data[0]) {
+                if (_instance.allowField == true && R.indexOf(k)(_instance.columns) == -1) continue
+
+                _instance.options.insertFields += !_instance.options.insertFields ? (',`' + k + '`') : ('(' + '`' + k + '`')
+            }
+            _instance.options.insertFields += ')'
+            for (let key in data) {
+                let val = data[key]
+                if (typeof val === 'object') {
+                    _instance.options.insertValues += !_instance.options.insertValues ? ',(' : '('
+                    for (let k in val) {
+                        if (_instance.allowField == true && R.indexOf(k)(_instance.columns) == -1) continue
+
+                        let v = val[k];
+                        _instance.options.insertValues += '\'' + v + '\',';
+                    }
+                    let stop = R.lastIndexOf(',')(_instance.options.insertValues) - 1
+                    let f = R.slice(0)(stop)(_instance.options.insertValues) + '\''
+                    _instance.options.insertValues = f + ')';
+                }
+            }
+        }
+        _instance.sql = 'INSERT INTO' + ' `' + _instance.schemaName + '` ' + _instance.options.insertFields + ' VALUE ' + _instance.options.insertValues + ''
+        return _instance.query(_instance.sql)
+    }
 }

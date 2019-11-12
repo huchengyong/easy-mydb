@@ -8,6 +8,6 @@ module.exports = (_instance, maps) => {
         _instance.limit(1)
     }
     return _instance.select().then((data) => {
-        return data && data.length > 0 ? data[0] : {}
+        return !data.length ? {} : data[0]
     })
 }

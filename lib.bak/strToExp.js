@@ -1,9 +1,12 @@
-const R = require('ramda')
-module.exports = maps => {
-    const [ string ] = maps
+/**
+ * @note 将字符串转化为表达式
+ * @param string
+ * @returns {string}
+ */
+module.exports = (string) => {
     let s = '=';
 
-    switch (R.toUpper(string)) {
+    switch (string.toUpperCase()) {
         case 'EQ':
             s = '=';
             break;

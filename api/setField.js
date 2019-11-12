@@ -4,8 +4,8 @@ module.exports = async (_instance, maps) => {
     if (wheres === '') {
         throw 'Lack of renewal conditions'
     }
-    value = value || ''
-    let sql = '`' + field + '` = \'' + value + '\''
-    _instance.options.sql = 'UPDATE `' + _instance.schemaName + '` SET ' + sql + wheres
-    return _instance.query(_instance.options.sql)
+    let val = value || ''
+    let sql = '`' + field + '` = \'' + val + '\''
+    _instance.sql = 'UPDATE `' + _instance.schemaName + '` SET ' + sql + wheres
+    return _instance.query(_instance.sql)
 }

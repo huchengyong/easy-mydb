@@ -1,20 +1,27 @@
-const R = require('ramda')
+/**
+ * @note 处理where条件对象
+ * @param condition 条件
+ * @param exp 表达式
+ * @param pKey
+ */
+
 const isKeyWord = require('./isKeyWord')
 const strToExp = require('./strToExp')
-function dealObject (_instance, condition, exp, pKey) {
+
+function dealObject (mysql, condition, exp, pKey) {
     for (let key in condition) {
         let val = condition[key]
 
         if (typeof val === 'object') {
             switch (key.toUpperCase()) {
                 case 'IN':
-                    _instance.whereIn(pKey, val)
+                    mysql.whereIn(pKey, val)
                     break
                 case 'BETWEEN':
-                    _instance.whereBtw(pKey, val)
+                    mysql.whereBtw(pKey, val)
                     break
                 case 'LIKE':
-                    _instance.whereLike(pKey, val)
+                    mysql.whereLike(pKey, val)
                     break
                 default:
                     break
@@ -26,26 +33,25 @@ function dealObject (_instance, condition, exp, pKey) {
             if (isKeyWord(key)) {
                 let s = strToExp(key);
                 //如果字段不存在.字符
-                pKey = R.replace('.')('`.`')(pKey)
+                pKey = pKey.split('.').join('`.`')
                 let sqlPiece = '`' + pKey + '` ' + s + ' \'' + val + '\' '
-                _instance.options.wheres += _instance.options.wheres == '' ? sqlPiece : (' ' + exp + ' ' + sqlPiece)
+                mysql.wheres += mysql.wheres == '' ? sqlPiece : (' ' + exp + ' ' + sqlPiece)
             } else if (key.toUpperCase() === 'IN') {
-                _instance.whereIn(pKey, val)
+                mysql.whereIn(pKey, val)
             } else if (key.toUpperCase() === 'BETWEEN') {
-                _instance.whereBtw(pKey, val)
+                mysql.whereBtw(pKey, val)
             } else if (key.toUpperCase() === 'LIKE') {
-                _instance.whereLike(pKey, val)
+                mysql.whereLike(pKey, val)
             } else {
                 //如果字段不存在.
-                key = R.replace('.')('`.`')(key)
+                key = key.split('.').join('`.`')
                 let sqlPiece = "`" + key + "` = \'" + val + '\' '
-                _instance.options.wheres += _instance.options.wheres == '' ? sqlPiece : (' ' + exp + ' ' + sqlPiece)
+                mysql.wheres += mysql.wheres == '' ? sqlPiece : (' ' + exp + ' ' + sqlPiece)
             }
         }
     }
 }
 
-module.exports = maps => {
-    const [ _instance, condition, conjunction ] = maps
-    dealObject(_instance, condition, conjunction)
+module.exports = (mysql, condition, conjunction) => {
+    dealObject(mysql, condition, conjunction)
 }

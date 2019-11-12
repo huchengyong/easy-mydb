@@ -1,14 +1,12 @@
-/**
- * @note 偏移
- * @param p 页码
- * @param offset 偏移量
- */
-module.exports = (mysql ,p, offset) => {
-    let start = (p - 1) * offset
+module.exports = (_instance, maps) => {
+    const [p, offset] = maps
 
-    if (offset != undefined) {
-        mysql.limits = start + ',' + offset;
+    let page = p > 1 ? p : 1
+    let start = (page - 1) * (offset || 0)
+
+    if (offset) {
+        _instance.options.limits = start + ',' + offset;
     } else {
-        mysql.limits = start;
+        _instance.options.limits = start;
     }
 }

@@ -1,20 +1,15 @@
 const lib = require('../lib')
-const query = require('./query')
-
-/**
- * @note 更新
- * @param data 要更新的数据
- * @returns {Promise<*>}
- */
-module.exports = async (mysql, data) => {
-    let wheres = mysql.getWheres()
+module.exports = async (_instance, maps) => {
+    const [ data ] = maps
+    let wheres = _instance.getWheres()
     if (wheres === '')
         throw 'Lack of renewal conditions'
 
-    await lib.setColumns(mysql)
-    lib.dealData(mysql, data)
-    let sql = lib.setUpdate(mysql)
-    mysql.sql = 'UPDATE `' + mysql.tableName + '` SET ' + sql + wheres
-    mysql.updateExp = ''
-    return query(mysql, mysql.sql)
+    if (_instance.allowField == true) await lib.setColumns(_instance)
+
+    lib.dealData(_instance, data)
+    let sql = lib.setUpdate(_instance)
+    _instance.sql = 'UPDATE `' + _instance.tableName + '` SET ' + sql + wheres
+    _instance.options.updateExp = ''
+    return _instance.query(_instance.sql)
 }

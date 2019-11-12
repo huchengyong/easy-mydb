@@ -1,15 +1,9 @@
-/**
- * @note 去重
- * @param field
- * @returns {db}
- */
-module.exports = (mysql, field) => {
+const R = require('ramda')
+module.exports = (_instance, maps) => {
+    const [ field ] = maps
     if (typeof field === 'string' && field != '') {
-        let distinct = field.split(',');
-
-        distinct = distinct.join('`,`');
-        distinct = distinct == '' ? '' : ('`' + distinct + '`');
-
-        mysql.distincts = ' DISTINCT ' + distinct;
+        let distinct = R.replace(',')('`,`')(field)
+        distinct = !distinct ? '`' + distinct + '`' : ''
+        _instance.options.distincts = ' DISTINCT ' + distinct;
     }
 }

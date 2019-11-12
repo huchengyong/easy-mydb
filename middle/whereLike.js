@@ -1,16 +1,10 @@
-/**
- * @note whereLike条件
- * @param field 字段名 必填
- * @param condition 条件 选填
- * @returns {db}
- */
-
-function whereLike (mysql, field, condition) {
+const R = require('ramda')
+function whereLike (_instance, field, condition) {
     if (condition != undefined) {
         if (typeof condition === 'string') {
-            field = field.split('.').join('`.`')
+            field = R.replace('.')('`.`')(field)
             let where = '`' + field + '` LIKE \'' + condition + '\''
-            mysql.wheres += mysql.wheres == '' ? where : ' AND ' + where
+            _instance.options.wheres += !_instance.options.wheres ? ' AND ' + where : where
         }
     } else {
         if (typeof field === 'object') {
@@ -22,6 +16,7 @@ function whereLike (mysql, field, condition) {
     }
 }
 
-module.exports = (mysql, field, condition) => {
-    whereLike(mysql, field, condition)
+module.exports = (_instance, maps) => {
+    const [ field, condition ] = maps
+    whereLike(_instance, field, condition)
 }
