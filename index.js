@@ -5,7 +5,11 @@ const mysql = require('mysql')
 
 class EasyMydb {
     constructor(dbConfig, tableName) {
-        this.options = new Object()
+        this.options = {
+            wheres: '',
+            orders: '',
+            groups: ''
+        }
         this.connect(dbConfig)
         this.formatModelToSchema(tableName)
     }
@@ -52,7 +56,10 @@ class EasyMydb {
      */
     loadMiddle() {
         R.forEachObjIndexed((v, k) => {
-            this[k] = (...maps) => v(this, maps)
+            this[k] = (...maps) => {
+                v(this, maps)
+                return this
+            }
         })(middle)
     }
 
@@ -134,9 +141,9 @@ class EasyMydb {
     }
 }
 
-const config = {host: '127.0.0.1',user: 'root', password: '123456', database: 'bearly.cn', prefix: 'ely_'}
+const config = {host: '127.0.0.1',user: 'root', password: 'root', database: 'bearly.cn', prefix: 'ely_'}
 const db = new EasyMydb(config)
-var test = db.table('group').select()
+var test = db.table('group').whereLike({groupName:'超%'}).fetchSql().select()
 test.then((data) => {
     console.log(data)
 })

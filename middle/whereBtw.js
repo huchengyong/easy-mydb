@@ -4,12 +4,12 @@ function whereBtw(_instance, field, condition) {
         if (typeof condition === 'string') condition = R.split(',')(condition)
         field = R.replace('.')('`.`')(field)
         let where = '`' + field + '` BETWEEN \'' + condition[0] + '\' AND \'' + condition[1] + '\''
-        _instance.options.wheres += !_instance.options.wheres ? ' AND ' + where : where
+        _instance.options.wheres += !R.isEmpty(_instance.options.wheres) ? ' AND ' + where : where
     } else {
         if (typeof field === 'object') {
             for (let k in field) {
                 let v = field[k]
-                whereBtw(k, v)
+                whereBtw(_instance, k, v)
             }
         }
     }

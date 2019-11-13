@@ -4,13 +4,13 @@ function whereLike (_instance, field, condition) {
         if (typeof condition === 'string') {
             field = R.replace('.')('`.`')(field)
             let where = '`' + field + '` LIKE \'' + condition + '\''
-            _instance.options.wheres += !_instance.options.wheres ? ' AND ' + where : where
+            _instance.options.wheres += !R.isEmpty(_instance.options.wheres) ? ' AND ' + where : where
         }
     } else {
         if (typeof field === 'object') {
             for (let k in field) {
                 let v = field[k]
-                whereLike(k, v)
+                whereLike(_instance, k, v)
             }
         }
     }
