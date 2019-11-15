@@ -149,20 +149,17 @@ const db = new EasyMydb(config)
 async function test()
 {
     let a = await db.table('user')
-        .where([{id:1},{age:{in:[1,2,3]}},{name:'New'}])
-        .whereBtw({sex: [1,4]})
-        .whereIn({id: '1,2,3,4,5,6'})
-        .whereLike('name', '%Times%').whereOr({age:1}).where([{sex:1}]).group('id').order({id:'asc'}).fetchSql().select();
-    let b = await db.table('user')
-        .where([{id:1},{age:{in:[1,2,3]}},{name:'New'}])
-        .whereBtw({sex: [1,4]})
-        .whereIn({id: '1,2,3,4,5,6'})
-        .whereLike('name', '%Times%').whereOr({age:1}).where([{sex:1}]).group('id').order({id:'desc'}).select();
-    // let c = await db.table('user').where({id:{in:[1,2,3,4]}}).fetchSql().select();
+        .field('id,sex,age')
+        .whereOr([{'`between`':{like:1}},{id:{between:[1,4]}},{age:{in:[1,2,3]}},{name:{like:'New'}}])
+        .fetchSql().select();
+    let c = await await db.table('user')
+        .field('id,sex,age')
+        .whereOr([{'`between`':{like:1}},{id:{between:[1,4]}},{age:{in:[1,2,3]}},{name:{like:'New'}}])
+        .select();
     // let d = await db.table('user').where({id:{between:[1,5]}}).select();
     // let e = await db.table('user').where([{id:1},{name:'New'}]).select();
     console.log(a)
-    console.log(b)
+    console.log(c)
 }
 test()
 db.table('user').release()

@@ -1,22 +1,23 @@
 const R = require('ramda')
-function whereLike (_instance, field, condition) {
-    if (condition != undefined) {
+function whereLike (_instance, field, condition, conjunction) {
+    let conj = conjunction || ' AND '
+    if (condition) {
         if (typeof condition === 'string') {
             field = R.replace(/\./g)('`.`')(field)
-            let where = ' `' + field + '` LIKE \'' + condition + '\' '
-            _instance.options.wheres += _instance.options.wheres ? ' AND ' + where : where
+            let where = ' `' + R.replace(/\B`|`\B/g)('')(field) + '` LIKE \'' + condition + '\' '
+            _instance.options.wheres += _instance.options.wheres ? conj + where : where
         }
     } else {
         if (typeof field === 'object') {
             for (let k in field) {
                 let v = field[k]
-                whereLike(_instance, k, v)
+                whereLike(_instance, k, v, conj)
             }
         }
     }
 }
 
 module.exports = (_instance, maps) => {
-    const [ field, condition ] = maps
-    whereLike(_instance, field, condition)
+    const [ field, condition, conjunction ] = maps
+    whereLike(_instance, field, condition, conjunction)
 }

@@ -7,10 +7,10 @@ module.exports = (_instance, maps) => {
         switch (R.toUpper(op)) {
             case 'IN':
                 if (typeof condition === 'object') {
-                    _instance.whereIn(field, condition)
+                    _instance.whereIn(field, condition, conj)
                 } else if (typeof condition === 'string') {
                     let cn = condition.split(',');
-                    _instance.whereIn(field, cn)
+                    _instance.whereIn(field, cn, conj)
                 }
                 break;
             case 'BETWEEN':
@@ -22,16 +22,14 @@ module.exports = (_instance, maps) => {
                 _instance.whereLike(field, condition)
                 break;
             default :
-                //如果字段不存在.字符
                 let fd = R.replace('.')('`.`')(field)
-                let wheres = '`' + fd + '` ' + op + ' \'' + condition + '\''
+                let wheres = '`' + R.replace(/\B`|`\B/g)('')(fd) + '` ' + op + ' \'' + condition + '\''
                 _instance.options.wheres += !_instance.options.wheres ? ' ' + conj + ' ' + wheres : wheres
                 break;
         }
     } else if (op) {
-        //如果字段不存在.字符
         let fd = R.replace('.')('`.`')(field)
-        let wheres = '`' + fd + '` = \'' + op + '\''
+        let wheres = '`' + R.replace(/\B`|`\B/g)('')(fd) + '` = \'' + op + '\''
         _instance.options.wheres += !_instance.options.wheres ? ' ' + conj + ' ' + wheres : wheres
     } else {
         switch (typeof field) {

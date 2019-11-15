@@ -1,5 +1,6 @@
 const R = require('ramda')
-function whereIn (_instance, field, condition) {
+function whereIn (_instance, field, condition, conjunction) {
+    let conj = conjunction || ' AND '
     if (condition) {
         if (typeof condition === 'object') {
             condition = R.join('\',\'')(condition)
@@ -7,19 +8,19 @@ function whereIn (_instance, field, condition) {
             condition = R.replace(/,/g)('\',\'')(condition)
         }
         field = R.replace(/\./g)('`.`')(field)
-        let where = ' `' + field + '` IN (\'' + condition + '\') '
-        _instance.options.wheres += _instance.options.wheres ? ' AND ' + where : where
+        let where = ' `' + R.replace(/\B`|`\B/g)('')(field) + '` IN (\'' + condition + '\') '
+        _instance.options.wheres += _instance.options.wheres ? conj + where : where
     } else {
         if (typeof field === 'object') {
             for (let k in field) {
                 let v = field[k]
-                whereIn(_instance, k, v)
+                whereIn(_instance, k, v, conj)
             }
         }
     }
 }
 
 module.exports = (_instance, maps) => {
-    const [ field, condition ] = maps
-    whereIn(_instance, field, condition)
+    const [ field, condition, conjunction ] = maps
+    whereIn(_instance, field, condition, conjunction)
 }
