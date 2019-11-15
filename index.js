@@ -15,6 +15,8 @@ class EasyMydb {
         }
         this.connect(dbConfig)
         this.formatModelToSchema(tableName)
+        this.loadMiddle()
+        this.loadApi()
     }
 
     /**
@@ -23,8 +25,6 @@ class EasyMydb {
      * @returns {EasyMydb}
      */
     model(tableName) {
-        this.loadMiddle()
-        this.loadApi()
         return new EasyMydb(this.dbConfig, tableName)
     }
 
@@ -81,8 +81,6 @@ class EasyMydb {
      * @param schemaName
      */
     table(schemaName) {
-        this.loadMiddle()
-        this.loadApi()
         this.schemaName = (this.dbConfig.prefix || '') + schemaName
         return this
     }
@@ -146,19 +144,19 @@ class EasyMydb {
 
 const config = {host: '127.0.0.1',user: 'root', password: '123456', database: 'test'}
 const db = new EasyMydb(config)
+const User = db.model('user')
+const Goods = db.model('goods')
 async function test()
 {
-    let a = await db.table('user')
-        .field('id,sex,age')
-        .whereOr([{'`between`':{like:1}},{id:{between:[1,4]}},{age:{in:[1,2,3]}},{name:{like:'New'}}])
-        .fetchSql().select();
-    let c = await await db.table('user')
+    let a = await User
         .field('id,sex,age')
         .whereOr([{'`between`':{like:1}},{id:{between:[1,4]}},{age:{in:[1,2,3]}},{name:{like:'New'}}])
         .select();
-    // let d = await db.table('user').where({id:{between:[1,5]}}).select();
-    // let e = await db.table('user').where([{id:1},{name:'New'}]).select();
     console.log(a)
+    let c = await await Goods
+        .field('*')
+        .where({id:1})
+        .select();
     console.log(c)
 }
 test()
