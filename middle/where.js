@@ -2,6 +2,7 @@ const R = require('ramda')
 const dealObject = require('../lib/dealObject')
 module.exports = (_instance, maps) => {
     const [ field, op, condition, conjunction ] = maps
+    let conj = conjunction || 'AND'
     if (op && condition) {
         switch (R.toUpper(op)) {
             case 'IN':
@@ -24,21 +25,21 @@ module.exports = (_instance, maps) => {
                 //如果字段不存在.字符
                 let fd = R.replace('.')('`.`')(field)
                 let wheres = '`' + fd + '` ' + op + ' \'' + condition + '\''
-                _instance.options.wheres += !_instance.options.wheres ? ' ' + conjunction + ' ' + wheres : wheres
+                _instance.options.wheres += !_instance.options.wheres ? ' ' + conj + ' ' + wheres : wheres
                 break;
         }
     } else if (op) {
         //如果字段不存在.字符
         let fd = R.replace('.')('`.`')(field)
         let wheres = '`' + fd + '` = \'' + op + '\''
-        _instance.options.wheres += !_instance.options.wheres ? ' ' + conjunction + ' ' + wheres : wheres
+        _instance.options.wheres += !_instance.options.wheres ? ' ' + conj + ' ' + wheres : wheres
     } else {
         switch (typeof field) {
             case 'object':
-                dealObject(_instance, field, conjunction);
+                dealObject(_instance, field, conj);
                 break;
             case 'string':
-                _instance.options.wheres += !_instance.options.wheres ? ' ' + conjunction + ' ' + field : field
+                _instance.options.wheres += !_instance.options.wheres ? ' ' + conj + ' ' + field : field
                 break;
             default:
                 _instance.options.wheres += ''

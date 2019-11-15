@@ -4,11 +4,11 @@ function whereIn (_instance, field, condition) {
         if (typeof condition === 'object') {
             condition = R.join('\',\'')(condition)
         } else if (typeof condition === 'string') {
-            condition = R.replace(',')('\',\'')(condition)
+            condition = R.replace(/,/g)('\',\'')(condition)
         }
-        field = R.replace('.')('`.`')(field)
-        let where = '`' + field + '` IN (\'' + condition + '\')'
-        _instance.options.wheres += !R.isEmpty(_instance.options.wheres) ? ' AND ' + where : where
+        field = R.replace(/\./g)('`.`')(field)
+        let where = ' `' + field + '` IN (\'' + condition + '\') '
+        _instance.options.wheres += _instance.options.wheres ? ' AND ' + where : where
     } else {
         if (typeof field === 'object') {
             for (let k in field) {

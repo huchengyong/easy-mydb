@@ -8,7 +8,10 @@ class EasyMydb {
         this.options = {
             wheres: '',
             orders: '',
-            groups: ''
+            groups: '',
+            updateExp: '',
+            insertFields: '',
+            insertValues: ''
         }
         this.connect(dbConfig)
         this.formatModelToSchema(tableName)
@@ -141,11 +144,27 @@ class EasyMydb {
     }
 }
 
-const config = {host: '127.0.0.1',user: 'root', password: 'root', database: 'bearly.cn', prefix: 'ely_'}
+const config = {host: '127.0.0.1',user: 'root', password: '123456', database: 'test'}
 const db = new EasyMydb(config)
-var test = db.table('group').whereLike({groupName:'超%'}).fetchSql().select()
-test.then((data) => {
-    console.log(data)
-})
+async function test()
+{
+    let a = await db.table('user')
+        .where([{id:1},{age:{in:[1,2,3]}},{name:'New'}])
+        .whereBtw({sex: [1,4]})
+        .whereIn({id: '1,2,3,4,5,6'})
+        .whereLike('name', '%Times%').whereOr({age:1}).where([{sex:1}]).group('id').order({id:'asc'}).fetchSql().select();
+    let b = await db.table('user')
+        .where([{id:1},{age:{in:[1,2,3]}},{name:'New'}])
+        .whereBtw({sex: [1,4]})
+        .whereIn({id: '1,2,3,4,5,6'})
+        .whereLike('name', '%Times%').whereOr({age:1}).where([{sex:1}]).group('id').order({id:'desc'}).select();
+    // let c = await db.table('user').where({id:{in:[1,2,3,4]}}).fetchSql().select();
+    // let d = await db.table('user').where({id:{between:[1,5]}}).select();
+    // let e = await db.table('user').where([{id:1},{name:'New'}]).select();
+    console.log(a)
+    console.log(b)
+}
+test()
+db.table('user').release()
 
 

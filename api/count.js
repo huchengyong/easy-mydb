@@ -2,7 +2,7 @@ const R = require('ramda')
 module.exports = (_instance, maps) => {
     const [ field ] = maps
 
-    let fd = (field && field !== '*') ? '`' + R.replace('.')('`.`')(field) + '`' : '*'
+    let fd = (field && field !== '*') ? '`' + R.replace(/\./g)('`.`')(field) + '`' : '*'
     fd = _instance.options.groups ? fd : "COUNT(" + fd + ") AS db_count"
     _instance.sql = 'SELECT ' + fd
     + _instance.getSelectSql()
