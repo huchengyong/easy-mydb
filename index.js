@@ -99,15 +99,6 @@ class EasyMydb {
         })
     }
 
-    /**
-     * return original sql, rather than query result
-     * @returns {EasyMydb}
-     */
-    fetchSql() {
-        this.isSql = true
-        return this
-    }
-
     getSelectSql() {
         return ' FROM `' + this.schemaName + '` '
         + (this.options.aliasStr || '')
@@ -142,24 +133,20 @@ class EasyMydb {
     }
 }
 
-const config = {host: '127.0.0.1',user: 'root', password: '123456', database: 'test'}
+const config = {host: '127.0.0.1',user: 'root', password: 'root', database: 'bearly.cn',prefix:'ely_'}
 const db = new EasyMydb(config)
-const User = db.model('user')
-const Goods = db.model('goods')
+const Group = db.model('group')
 async function test()
 {
-    let a = await User
-        .field('id,sex,age')
-        .whereOr([{'`between`':{like:1}},{id:{between:[1,4]}},{age:{in:[1,2,3]}},{name:{like:'New'}}])
-        .select();
-    console.log(a)
-    let c = await await Goods
-        .field('*')
-        .where({id:1})
-        .select();
-    console.log(c)
+    let res = await Group.insertAll([
+            {groupName:'Hu',rules:'1,2,3',parentId:1}, 
+            {groupName:'HuChe',rules:'1,2,3',parentId:1},
+            {groupName:'HuCheng',rules:'1,2,3',parentId:1},
+            {groupName:'HuChengYong',rules:'1,2,3',parentId:1}
+            ],4)
+    console.log(res)
 }
 test()
-db.table('user').release()
+Group.release()
 
 

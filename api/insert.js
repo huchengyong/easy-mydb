@@ -1,8 +1,9 @@
-const lib = require('../lib')
+const setColumns = require('../lib/setColumns')
 const R = require('ramda')
-module.exports = async (_instance, data) => {
+module.exports = async (_instance, maps) => {
+    const [ data ] = maps
     if (_instance.allowField == true) {
-        await lib.setColumns(_instance)
+        await setColumns(_instance)
     }
 
     if (typeof data === 'object') {
@@ -10,11 +11,11 @@ module.exports = async (_instance, data) => {
             if (_instance.allowField == true && R.indexOf(k)(_instance.columns) == -1) continue
 
             let field = '`' + k + '`'
-            _instance.options.insertFields += !_instance.options.insertFields ? ',' + field : field
+            _instance.options.insertFields += _instance.options.insertFields ? ',' + field : field
             let v = data[k];
             if (typeof v === 'string' || typeof v === 'number') {
                 let value = '\'' + v + '\''
-                _instance.options.insertValues += !_instance.options.insertValues ? ',' + value : value
+                _instance.options.insertValues += _instance.options.insertValues ? ',' + value : value
             }
         }
     }

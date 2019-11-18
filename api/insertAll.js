@@ -1,6 +1,8 @@
 const lib = require('../lib')
 const R = require('ramda')
-module.exports = async (_instance, data, limit) => {
+module.exports = async (_instance, maps) => {
+    let [ data, limit ] = maps
+    let result = null
     if (_instance.allowField == true) {
         await lib.setColumns(_instance)
     }
@@ -9,18 +11,19 @@ module.exports = async (_instance, data, limit) => {
     const pages = limit ? Math.ceil(total / (limit || 1)) : 1
 
     for (let page = 0; page < pages; page++) {
-        data = limit ? R.slice(page * limit)(limit)(data) : data
-        if (typeof data === 'object') {
-            for (let k in data[0]) {
+        let start = page * limit
+        let newData = limit ? R.slice(start)(parseInt(start) + parseInt(limit))(data) : data
+        if (typeof newData === 'object') {
+            for (let k in newData[0]) {
                 if (_instance.allowField == true && R.indexOf(k)(_instance.columns) == -1) continue
 
-                _instance.options.insertFields += !_instance.options.insertFields ? (',`' + k + '`') : ('(' + '`' + k + '`')
+                _instance.options.insertFields += _instance.options.insertFields ? (',`' + k + '`') : ('(' + '`' + k + '`')
             }
             _instance.options.insertFields += ')'
-            for (let key in data) {
-                let val = data[key]
+            for (let key in newData) {
+                let val = newData[key]
                 if (typeof val === 'object') {
-                    _instance.options.insertValues += !_instance.options.insertValues ? ',(' : '('
+                    _instance.options.insertValues += _instance.options.insertValues ? ',(' : '('
                     for (let k in val) {
                         if (_instance.allowField == true && R.indexOf(k)(_instance.columns) == -1) continue
 
@@ -34,6 +37,7 @@ module.exports = async (_instance, data, limit) => {
             }
         }
         _instance.sql = 'INSERT INTO' + ' `' + _instance.schemaName + '` ' + _instance.options.insertFields + ' VALUE ' + _instance.options.insertValues + ''
-        return _instance.query(_instance.sql)
+        result = await _instance.query(_instance.sql)
     }
+    return result
 }
