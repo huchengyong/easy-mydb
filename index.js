@@ -10,8 +10,8 @@ class EasyMydb {
             orders: '',
             groups: '',
             updateExp: '',
-            insertFields: '',
-            insertValues: ''
+            insertFields: [],
+            insertValues: []
         }
         this.connect(dbConfig)
         this.formatModelToSchema(tableName)
@@ -136,14 +136,21 @@ class EasyMydb {
 const config = {host: '127.0.0.1',user: 'root', password: 'root', database: 'bearly.cn',prefix:'ely_'}
 const db = new EasyMydb(config)
 const Group = db.model('group')
+const Staff = db.model('staff')
 async function test()
 {
-    let res = await Group.insertAll([
-            {groupName:'Hu',rules:'1,2,3',parentId:1}, 
-            {groupName:'HuChe',rules:'1,2,3',parentId:1},
-            {groupName:'HuCheng',rules:'1,2,3',parentId:1},
-            {groupName:'HuChengYong',rules:'1,2,3',parentId:1}
-            ],4)
+    let insert = {
+        userName:'Times',
+        realName:'HuCheng',
+        mobile:'13656566767',
+        gender:'1',
+        password:'eacefdgetdfsgdfvbsgdfdgshacgsfdw',
+        hash:'fer345',
+        groupId:68,
+        parentId:0,
+        status:1
+    }
+    let res = await Staff.insert(insert)
     console.log(res)
 }
 test()

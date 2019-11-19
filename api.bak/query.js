@@ -8,8 +8,8 @@ module.exports = (mysql, sql) => {
     mysql.groups = '';
     mysql.distincts = '';
     mysql.wheres = '';
-    mysql.insertFields = '';
-    mysql.insertValues = '';
+    mysql.insertFields = [];
+    mysql.insertValues = [];
     mysql.aliasStr = '';
     mysql.joinStr = '';
     mysql.limits = '';

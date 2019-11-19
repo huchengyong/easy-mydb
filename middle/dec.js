@@ -1,5 +1,5 @@
 function deal(_instance, field, value) {
-    if (field != undefined && value != undefined) {
+    if (field && value) {
         const fieldStr = '`' + field + '`'
         const valueStr = '`' + field + '` - ' + value
         const updateExp = fieldStr + ' = ' + valueStr

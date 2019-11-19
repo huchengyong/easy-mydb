@@ -1,9 +1,9 @@
 const R = require('ramda')
 
 const api = [
-    'avg', 'count', 'del', 'find', 'getPrimaryKey', 'insert', 'insertAll',
-    'max', 'query', 'release', 'select', 'setPrimaryKey', 'sum', 'setDec',
-    'setField'
+    'avg', 'count', 'del', 'find', 'getPk', 'insert', 'insertAll',
+    'max', 'min', 'query', 'release', 'select', 'setDec', 'setField', 'setInc',
+    'setPk', 'sum', 'update'
 ]
 
 R.forEach(v => {
