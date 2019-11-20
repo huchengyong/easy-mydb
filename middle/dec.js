@@ -2,8 +2,7 @@ function deal(_instance, field, value) {
     if (field && value) {
         const fieldStr = '`' + field + '`'
         const valueStr = '`' + field + '` - ' + value
-        const updateExp = fieldStr + ' = ' + valueStr
-        _instance.options.updateExp += !_instance.options.updateExp ? ',' + updateExp : updateExp
+        _instance.options.updateExp.push(fieldStr + ' = ' + valueStr)
     } else if (field != undefined) {
         if (typeof field === 'object') {
             for (let k in field) {

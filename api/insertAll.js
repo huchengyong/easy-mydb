@@ -1,10 +1,10 @@
-const lib = require('../lib')
+const setColumns = require('../lib/setColumns')
 const R = require('ramda')
 module.exports = async (_instance, maps) => {
     let [ data, limit ] = maps
     let result = null
     if (_instance.allowField == true) {
-        await lib.setColumns(_instance)
+        await setColumns(_instance)
     }
 
     const total = data.length
@@ -17,26 +17,22 @@ module.exports = async (_instance, maps) => {
             for (let k in newData[0]) {
                 if (_instance.allowField == true && R.indexOf(k)(_instance.columns) == -1) continue
 
-                _instance.options.insertFields += _instance.options.insertFields ? (',`' + k + '`') : ('(' + '`' + k + '`')
+                _instance.options.insertFields.push(k)
             }
-            _instance.options.insertFields += ')'
             for (let key in newData) {
                 let val = newData[key]
                 if (typeof val === 'object') {
-                    _instance.options.insertValues += _instance.options.insertValues ? ',(' : '('
-                    for (let k in val) {
-                        if (_instance.allowField == true && R.indexOf(k)(_instance.columns) == -1) continue
-
-                        let v = val[k];
-                        _instance.options.insertValues += '\'' + v + '\',';
-                    }
-                    let stop = R.lastIndexOf(',')(_instance.options.insertValues) - 1
-                    let f = R.slice(0)(stop)(_instance.options.insertValues) + '\''
-                    _instance.options.insertValues = f + ')';
+                    _instance.options.insertValues.push(R.props(_instance.options.insertFields)(val))
                 }
             }
+
+            _instance.options.insertValues = R.map(v => `'${R.join('\',\'')(v)}'`)(_instance.options.insertValues)
         }
-        _instance.sql = 'INSERT INTO' + ' `' + _instance.schemaName + '` ' + _instance.options.insertFields + ' VALUE ' + _instance.options.insertValues + ''
+        _instance.sql = 'INSERT INTO' 
+        + ' `' + _instance.schemaName + '` (`' 
+        + R.join('`,`')(_instance.options.insertFields) 
+        + '`) VALUE (' 
+        + R.join('),(')(_instance.options.insertValues) + ')'
         result = await _instance.query(_instance.sql)
     }
     return result

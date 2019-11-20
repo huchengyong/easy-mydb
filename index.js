@@ -9,7 +9,7 @@ class EasyMydb {
             wheres: '',
             orders: '',
             groups: '',
-            updateExp: '',
+            updateExp: [],
             insertFields: [],
             insertValues: []
         }
@@ -139,18 +139,15 @@ const Group = db.model('group')
 const Staff = db.model('staff')
 async function test()
 {
-    let insert = {
-        userName:'Times',
-        realName:'HuCheng',
-        mobile:'13656566767',
-        gender:'1',
-        password:'eacefdgetdfsgdfvbsgdfdgshacgsfdw',
-        hash:'fer345',
-        groupId:68,
-        parentId:0,
-        status:1
-    }
-    let res = await Staff.insert(insert)
+    let insert = 
+    [
+        {groupName:'HU',rules:'1,2,3,4',parentId:0},
+        {groupName:'HUO',rules:'1,2,3,4',parentId:0},
+        {groupName:'HUC',rules:'1,2,3,4',parentId:0}
+    ]
+    let update = {groupName:'TIMESNEWROAMN'}
+    let res = await Group.where({id:68}).exp({groupName:'UPPER("groupName")'}).inc({parentId:2}).update()
+    await Group.insertAll(insert)
     console.log(res)
 }
 test()

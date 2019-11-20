@@ -10,9 +10,9 @@ module.exports = async (_instance, maps) => {
         wheres: '',
         orders: '',
         groups: '',
-        updateExp: '',
-        insertFields: '',
-        insertValues: ''
+        updateExp: [],
+        insertFields: [],
+        insertValues: []
     }
     //fetch sql
     if (_instance.isSql === true) {

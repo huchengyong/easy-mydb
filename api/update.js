@@ -10,16 +10,12 @@ module.exports = async (_instance, maps) => {
 
     if (_instance.allowField == true) await setColumns(_instance)
 
-    let updateArr = []
-    let updateFields = ''
     for (let k in data) {
         let v = data[k]
         if (_instance.allowField == true && R.indexOf(k)(_instance.columns) == -1) continue
-        updateArr.push(`\`${k}\` = '${v}'`)
+        _instance.options.updateExp.push(`\`${k}\` = '${v}'`)
     }
 
-    let updateStr = R.join(',')(updateArr)
-
-    _instance.sql = 'UPDATE `' + _instance.schemaName + '` SET ' + updateStr + wheres
+    _instance.sql = 'UPDATE `' + _instance.schemaName + '` SET ' + R.join(',')(_instance.options.updateExp) + wheres
     return _instance.query(_instance.sql)
 }
