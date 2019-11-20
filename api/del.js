@@ -1,7 +1,8 @@
 module.exports = (_instance, maps) => {
 	const [ pk ] = maps
     if (pk) {
-        _instance.sql = 'DELETE FROM ' + '`' + _instance.schemaName + '` WHERE `' + _instance.primaryKey + '` = \'' + pk + '\''
+        if (typeof pk === 'strging') pk = `'${pk}'`
+        _instance.sql = 'DELETE FROM ' + '`' + _instance.schemaName + '` WHERE `' + (_instance.primaryKey || 'id') + '` = ' + pk
     } else {
         let wheres = _instance.getWheres()
         if (wheres === '')

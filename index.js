@@ -146,8 +146,7 @@ async function test()
         {groupName:'HUC',rules:'1,2,3,4',parentId:0}
     ]
     let update = {groupName:'TIMESNEWROAMN'}
-    let res = await Group.where({id:68}).exp({groupName:'UPPER("groupName")'}).inc({parentId:2}).update()
-    await Group.insertAll(insert)
+    let res = await Group.where({id:{gt:68}}).del()
     console.log(res)
 }
 test()
