@@ -1,38 +1,5 @@
 # easy-mydb
 
-## Table of contents
-
-- [Install](#install)
-- [Introduction](#introduction)
-- [select](#select)
-- [insert](#insert)
-- [insertAll](#insertAll)
-- [update](#update)
-- [delete](#delete)
-- [find](#find)
-- [query](#query)
-- [count (v2.1.0)](#count)
-- [sum (v2.1.0)](#sum)
-- [max (v2.1.0)](#max)
-- [min (v2.1.0)](#min)
-- [avg (v2.1.0)](#avg)
-- [setInc (v2.2.0)](#setInc)
-- [setDec (v2.2.0)](#setDec)
-- [setField (v2.2.0)](#setField)
-- [where](#where)
-- [whereOr](#whereOr)
-- [field](#field)
-- [order](#order)
-- [group](#group)
-- [limit](#limit)
-- [page (v2.1.0)](#page)
-- [distinct](#distinct)
-- [alias&mJoin (v2.1.0)](#alias&mJoin)
-- [dec (v2.2.0)](#dec)
-- [inc (v2.2.0)](#inc)
-- [exp (v2.2.0)](#exp)
-- [release](#release)
-
 ## Install
 
 ```sh
@@ -41,36 +8,50 @@ $ npm install --save easy-mydb
 
 ## Introduction
 
-We can use [Mysql](https://www.npmjs.com/package/mysql) more easily
+`Easy-mydb` encapsulate some methods of [Mysql](https://www.npmjs.com/package/mysql) to use more convenient
 
-Here is an example on how to use it
+If you want to query the data in the original way, you can do that like following example.
 
 ```js
-var Db = require('easy-mydb');
-var config = {
+var connection = mysql.createConnection({
+  host     : 'localhost',
+  user     : 'root',
+  password : 'root',
+  database : 'db_name'
+});
+ 
+connection.connect();
+ 
+connection.query('SELECT * FROM member WHERE uid = 1 AND status = 1', function (error, results, fields) {
+  if (error) throw error;
+  console.log('The members are: ', results);
+});
+```
+As you can see, you need to write native sql by your self. If you want to query more data from different table, you have
+to write more native sql like `SELECT * FROM ... WHERE ...`. It's very redundant and inconvenient.
+
+So how can we operate mysql table more convenient ? let's see following example.
+```js
+const EasyMydb = require('easy-mydb');
+const config = {
     host: '127.0.0.1'
     , database: 'test'
     , user: 'root'
     , password: '123456'
     , prefix: 'db_'
 };
-var db = new Db()
+const db = new EasyMydb(config)
+//if you want a instance to operate table `User` only, you can use method 'model' to get a `User` instance of EasyMydb
+const User = db.model('user') //'user' must be a practical table in your schema
 
-db.connect(config)
-
-var allUser = db.table('user').select() // The sql is 'select * from `db_user`'
-
-var user = db.table('user').find(1)
-
-allUser.then((data) => {
-    console.log(data) // [{id:1,name:root}, {id:2,name:admin}]
-})
-
-async function test() {
-    var user = await db.table('user').find(1);
-    console.log(user)
+async function test () {
+    let users = await User.where({uid: 1, status: 1}).select()
+    
+    // if you want to operate table directly rather than get a instance first.
+    let user = db.table('user').where({uid: 1, status: 1}).find()
 }
-test() // {id:1,name:root}
+
+test()
 
 db.release()
 

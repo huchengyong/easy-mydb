@@ -1,5 +1,3 @@
-const setUpdate = require('../lib/setUpdate')
-const dealData = require('../lib/dealData')
 const setColumns = require('../lib/setColumns')
 const R = require('ramda')
 module.exports = async (_instance, maps) => {

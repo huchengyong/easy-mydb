@@ -133,23 +133,4 @@ class EasyMydb {
     }
 }
 
-const config = {host: '127.0.0.1',user: 'root', password: 'root', database: 'bearly.cn',prefix:'ely_'}
-const db = new EasyMydb(config)
-const Group = db.model('group')
-const Staff = db.model('staff')
-async function test()
-{
-    let insert = 
-    [
-        {groupName:'HU',rules:'1,2,3,4',parentId:0},
-        {groupName:'HUO',rules:'1,2,3,4',parentId:0},
-        {groupName:'HUC',rules:'1,2,3,4',parentId:0}
-    ]
-    let update = {groupName:'TIMESNEWROAMN'}
-    let res = await Group.where({id:{gt:68}}).del()
-    console.log(res)
-}
-test()
-Group.release()
-
 
