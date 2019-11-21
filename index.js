@@ -34,14 +34,19 @@ class EasyMydb {
      * @returns {Promise<void>}
      */
     async connect(config) {
-        this.dbConfig = config
-        this.pool = mysql.createPool({
-            connectionLimit: this.dbConfig.limit || 10,
-            host: this.dbConfig.host || '',
-            user: this.dbConfig.user || '',
-            password: this.dbConfig.password || '',
-            database: this.dbConfig.database || ''
-        })
+        let baseConfig = {
+            connectionLimit: 10,
+            host: 'localhost',
+            user: '',
+            password: '',
+            port: 3306,
+            database: '',
+            charset: 'UTF8_GENERAL_CI',
+            timezone: 'local',
+            connectTimeout: 10000,
+        }
+        this.dbConfig = R.mergeRight(baseConfig)(config)
+        this.pool = mysql.createPool(this.dbConfig)
         this.connection = this.getConnection()
     }
 

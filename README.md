@@ -13,6 +13,7 @@ $ npm install --save easy-mydb
 If you want to query the data in the original way, you can do that like following example.
 
 ```js
+var mysql = require('mysql');
 var connection = mysql.createConnection({
   host     : 'localhost',
   user     : 'root',
@@ -52,200 +53,120 @@ async function test () {
 }
 
 test()
-
+User.release()
 db.release()
-
 ```
 
-## select
-This method can query all data.
+## Connection options
+We use method `createPool` to connect `mysql`, the options are same as mysql's options.
+The most common options are
+* `host` The hostname of the database you are connecting to. (Default: localhost)
+* `port` The port number to connect to. (Default: 3306)
+* `user`  The MySQL user to authenticate as.
+* `password` The password of that MySQL user.
+* `database` Name of the database to use for this connection (Optional).
+* `connectionLimit` The maximum number of connections to create at once. (Default: 10).
+* ... more options you can see on [Mysql](https://www.npmjs.com/package/mysql)
 
-For example
-
+## Query data
+Use method `find` to query single data
 ```js
-//We can use 'where' method to filter some data
-db.table('user').where({id:1}).select() //you will get a Promise object
+User.where({id: 1}).find()
 ```
-
-## insert
-This method can insert one data to table
-
+The resulting SQL statement may be
+```SQL
+SELECT * FROM `user` where `id` = 1 LIMIT 1
+```
+Use method `select` to query multiple data
 ```js
-db.table('user').insert({id:1,name:'root'});
-//insert into user (id,name) value (1,'root');
+User.where({status: 1}).select()
+```
+The resulting SQL statement may be
+```SQL
+SELECT * FROM `user` where `status` = 1
 ```
 
-## insertAll
-
+## Insert data
+Use method `insert` to insert single data
 ```js
-db.table('user').insertAll([{id:1,name:'root'},{id:2,name:'admin'}])
+let data = {name: 'root', 'age': 1, status: 1}
+User.insert(data)
 ```
-
-## update
-
+Use method `insertAll` to insert multiple data
 ```js
-db.table('user').where({id:1}).update({name:'root1'});
-// update user set name=root where id = 1;
+let data = [
+    {name: 'root', age: 1, status: 1},
+    {name: 'admin', age: 1, status: 1},
+    //...
+]
+User.insertAll(data)
 ```
-
-## delete
-
+If the data is to large, you can add a second parameter to specify the number limit for each insert.
 ```js
-db.table('user').where({id:1}).delete();
-//Or
-db.table('user').delete(1); //v2.2.0 Fix known bugs
-// 1 must be primary key, if the table primary key is not 'id', you can use
-// db.setPrimaryKey('uid') method
+let data = [
+    {name: 'root', age: 1, status: 1},
+    {name: 'admin', age: 1, status: 1},
+    //...
+]
+User.insertAll(data, 100)
 ```
 
-## find
-This method can query one data
-
+## Update data
+Just add data you want to updated and with method `where`
 ```js
-db.table('user').where({id:1}).find()
-//or
-db.table('user').find(1) // select * from user where id = 1 limit 1
-// or
-db.setPrimaryKey('uid')
-db.table('user').find(1) // select * from user where uid = 1 limit 1
-// param must be primary key
+let data = {name: 'administrator', age: 2}
+User.where({id: 1}).update(data)
 ```
-
-## query
-We can use native SQL with this method
+We also have some methods to update the specified fields
+* `setField(name, value)` update single field's value
+* `setInc(name, value)` increment the field's value
+* `setDec(name, value)` decrement the field's value
 ```js
-db.query('select * from user') // you will get a Promise object
+User.where({id: 1}).setField('name', 'UPPER(`name`)')
+// update `user` set `name` = upper(`name`) where `id` = 1
+User.where({id: 1}).setInc('status')
+// update `user` set `status` = `status` + 1 where `id` = 1
+User.where({id: 1}).setDec('age', 2)
+// update `user` set `age` = `age` - 2 where `id` = 1
 ```
-
-## count
+We can use method `update` to achieve the same effect like method `setField`,`setInc`,`setDec`.
+Look at following example
 ```js
-db.table('user').count() //select count(*) from user
+User.where({id: 1}).exp('name', 'UPPER("root")').inc('status').dec('age', 2).update()
+```
+The resulting SQL statement may be
+```sql
+update `user` set `name` = UPPER("root"),`status` = `status` + 1,`age` = `age` - 2 where `id` = 1
 ```
 
-## sum
+## Delete data
+Use method `del` to delete data from database's table
 ```js
-db.table('user').sum('age') //select sum(age) from user
+User.where({id: 1}).del()
 ```
-
-## max
+You can alse use method `del` more simpler
 ```js
-db.table('user').max('id') //select max(id) from user
+User.del(1)
 ```
-
-## min
+`id` must be your table's primary key, if not, you can use method `setPk` to specify the primary key
 ```js
-db.table('user').min('id') //select min(id) from user
+User.setPk('uid')
 ```
+Same as method `find`
 
-## avg
-```js
-db.table('user').avg('age') //select avg(age) from user
-```
-
-## setInc
-```js
-db.table('user').where({id:1}).setInc('age') //update `user`  set `age` = `age` + 1  where  `id` = 1
-db.table('user').where({id:1}).setInc('age',2) //update `user`  set `age` = `age` + 2  where  `id` = 1 
-```
-
-## setDec
-```js
-db.table('user').where({id:1}).setDec('age') //update `user`  set `age` = `age` - 1  where  `id` = 1
-db.table('user').where({id:1}).setDec('age',2) //update `user`  set `age` = `age` - 2  where  `id` = 1
-```
-
-## setField
-```js
-db.table('user').where({id:1}).setField('age','24') //update user set age = 24 where id = 1
-```
-
-## where
-This method can filter some data
-
-```js
-db.table('user').where({id:1,name:'root'}).select() //where id = 1 and name = 'root'
-
-db.table('user').where({id:{gt:1},name:'root'}).select() //where id > 1 and name = 'root'
-// ['gt'=>'>','lt'=>'<','eq'=>'=','egt'=>'>=','elt'=>'<=']
-
-db.table('user').where({name:{like:'%root%'}}).select() // where name like '%root%'
-//or
-db.table('user').whereLike({name:'%root%'}).select()
-
-db.table('user').where({id:{in:[1,2,3,4]}}).select() // where id in 1,2,3,4
-//or
-db.table('user').whereIn({id:[1,2,3,4]}).select()
-
-db.table('user').where({id:{between:[1,4]}}).select() // where id between 1 and 4
-//or
-db.table('user').whereBtw({id:[1,4]}).select()
-```
-## whereOr
-similar with where method
-
-## field
-This method can filter some fields
-```js
-db.table('user').field('id,name').select() // select id,name from user
-```
-
-## order
-```js
-db.table('user').order({id:'desc'}).select() //select * from user order by id desc
-```
-
-## group
-```js
-db.table('user').group('id').select() // select * from user group by id
-```
-
-## limit
-
-```js
-db.table('user').limit(0,10).select() //select * from user limit 0,10
-```
-
-## page
-```js
-db.table('user').page(1,10).select() //select * from user limit 0,10
-db.table('user').page(2,10).select() //select * from user limit 10,10
-db.table('user').page(3,10).select() //select * from user limit 20,10
-```
-
-## distinct
-```js
-db.table('user').distinct('name').select() //select distinct name from user;
-```
-
-## alias&mJoin
-```js
-db.table('user').alias('u').join('profile p', 'p.uid=u.id').where({'u.id':1}).select()
-//select * from user u inner join profile p on p.uid=u.id where u.id = 1
-db.table('user').alias('u').join('profile p', 'p.uid=u.id', 'inner'|'left'|'right').select()
-//select * from user u inner|left|right join profile p on p.uid=u.id
-```
-
-## dec
-```js
-db.table('user').dec('age').where({id: 1}).update() // update user set age = age - 1 where id = 1
-db.table('user').dec('age', 3).where({id: 1}).update() // update user set age = age - 3 where id = 1
-db.table('user').dec({age: 3, sex: 2}).where({id: 1}).update() // update user set age = age - 3,sex = sex - 2 where id = 1
-```
-
-## inc
-```js
-db.table('user').inc('age').where({id: 1}).update() // update user set age = age + 1 where id = 1
-db.table('user').inc('age', 3).where({id: 1}).update() // update user set age = age + 3 where id = 1
-db.table('user').inc({age: 3, sex: 2}).where({id: 1}).update() // update user set age = age + 3,sex = sex + 2 where id = 1
-```
-
-## exp
-```js
-db.table('user').exp('name', 'root').where({id: 1}).update()
-// update user set name = 'root' where id = 1
-db.table('user').exp({name: 'UPPER(root)'}).where({id: 1}).update()
-// update user set name = UPPER('root') where id = 1
-```
+## Chain operations
+* #### [alias](#alias)
+* #### [distinct](#distinct)
+* #### [fetchSql](#fetchSql)
+* #### [field](#field)
+* #### [group](#group)
+* #### [limit](#limit)
+* #### [mJoin](#mJoin)
+* #### [model](#model)
+* #### [order](#order)
+* #### [page](#page)
+* #### [table](#table)
+* #### [where](#where)
 
 ## release
 After use, you must use the release() method to release resource
