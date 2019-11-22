@@ -170,7 +170,7 @@ Same as method `find`
 
 ## alias
 * `alias` alias of the current data table.
-Alias is used to set the alias of the current data table, which is convinient to use other chained operations such as method `mJoin`. Because the `join` is a build-in method of JavaScript, so we use `mJoin` steated. 
+Alias is used to set the alias of the current data table, which is convinient to use other chained operations such as method `mJoin`. Because the `join` is a build-in method of JavaScript, so we use `mJoin` instead. 
 ```js
 User.alias('u').mJoin('group g', 'u.groupId = g.id').select()
 ```
