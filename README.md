@@ -154,7 +154,7 @@ User.setPk('uid')
 ```
 Same as method `find`
 
-## Chain operations
+## Chained operations
 * #### [alias](#alias)
 * #### [distinct](#distinct)
 * #### [fetchSql](#fetchSql)
@@ -167,6 +167,66 @@ Same as method `find`
 * #### [page](#page)
 * #### [table](#table)
 * #### [where](#where)
+
+## alias
+* `alias` alias of the current data table.
+Alias is used to set the alias of the current data table, which is convinient to use other chained operations such as method `mJoin`. Because the `join` is a build-in method of JavaScript, so we use `mJoin` steated. 
+```js
+User.alias('u').mJoin('group g', 'u.groupId = g.id').select()
+```
+The resulting SQL statement will be
+```sql
+select * from `user` `u` inner join `group` `g` on `u`.`groupId` = `g`.`id`
+```
+## distinct
+* `field` field's name of data table which you want unique.
+Distinct method is used to return a unique different value.
+```js
+User.distinct('name').select()
+```
+The data returned will be
+```js
+[
+	{'name': 'root'},
+	{'name': 'admin'}
+]
+```
+
+## fetchSql
+If the result of query which you want is only the resulting SQL statement, `fetchSql` can help you.
+```js
+User.where({id: 1}).select()
+```
+The returned result is not a dataset, but a string of SQL statements.
+```sql
+select * from `user` where `id` = 1
+```
+
+## field
+* `name` the field names you want to keep
+In some cases, you don't need all the fields, and the `field` method keeps the fields you want to keep.
+```js
+User.field('id,name').select()
+```
+You can even use some MYSQL functions, just like
+```js
+User.field('count(*) as count_result').select()
+```
+The resulting SQL statement will be
+```sql
+select count(*) as count_result from `user`
+```
+
+## group
+* `name` field name to be grouped
+Group dataset based on one or more fields, if you want to group by gender
+```js
+User.where({status: 1}).group('gender').select()
+```
+The resulting SQL statement will be
+```sql
+select * from `user` where `status` = 1 group by `gender`
+```
 
 ## release
 After use, you must use the release() method to release resource
