@@ -114,7 +114,7 @@ User.insertAll(data, 100)
 ```
 
 ## Update data
-* `update` do update with `where` method
+* `update()` do update with `where` method
 * `setField(name, value)` update single field's value
 * `setInc(name, value)` increment the field's value
 * `setDec(name, value)` decrement the field's value
@@ -146,7 +146,7 @@ update `user` set `name` = UPPER("root"),`status` = `status` + 1,`age` = `age` -
 ```
 
 ## Delete data
-* `del` delete data from database's table
+* `del()` delete data from database's table
 
 ```js
 User.where({id: 1}).del()
@@ -177,6 +177,7 @@ Same as `find` method
 
 ## alias
 * `alias` alias of the current data table.
+
 Alias is used to set the alias of the current data table, which is convinient to use other chained operations such as method `mJoin`. Because the `join` is a build-in method of JavaScript, so we use `mJoin` instead. 
 ```js
 User.alias('u').mJoin('group g', 'u.groupId = g.id').select()
@@ -187,6 +188,7 @@ select * from `user` `u` inner join `group` `g` on `u`.`groupId` = `g`.`id`
 ```
 ## distinct
 * `field` field's name of data table which you want unique.
+
 Distinct method is used to return a unique different value.
 ```js
 User.distinct('name').select()
@@ -210,7 +212,8 @@ select * from `user` where `id` = 1
 ```
 
 ## field
-* `name` the field names you want to keep
+* `name` the field's names you want to keep.
+
 In some cases, you don't need all the fields, and the `field` method keeps the fields you want to keep.
 ```js
 User.field('id,name').select()
@@ -225,7 +228,8 @@ select count(*) as count_result from `user`
 ```
 
 ## group
-* `name` field name to be grouped
+* `name` field name to be grouped.
+
 Group dataset based on one or more fields, if you want to group by gender
 ```js
 User.where({status: 1}).group('gender').select()
