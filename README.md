@@ -352,7 +352,7 @@ The resulting SQL statement will be
 ```sql
 select * from `user` where `id` in (1,2,3,4)
 ```
-Same as `whereIn` method, what's `whereIn`? Please see [AdvancedQuery](#AdvancedQuery)
+Same as `whereIn` method, what's `whereIn`? Please see 'Advanced query'
 
 ## whereOr
 `condition` conditions for querying data.
@@ -361,7 +361,7 @@ Needless to say, I believe you already know what this method is for.
 
 Same as `where` method.
 
-## AdvanceQuery
+## Advance query
 * `whereIn` where field in
 * `whereNotIn` where field not in
 * `whereNull` whether the query field is null
