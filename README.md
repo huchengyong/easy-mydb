@@ -176,7 +176,7 @@ Same as `find` method
 - [where](#where)
 
 ## alias
-* `alias` alias of the current data table.
+`alias` alias of the current data table.
 
 Alias is used to set the alias of the current data table, which is convinient to use other chained operations such as method `mJoin`. Because the `join` is a build-in method of JavaScript, so we use `mJoin` instead. 
 ```js
@@ -187,7 +187,7 @@ The resulting SQL statement will be
 select * from `user` `u` inner join `group` `g` on `u`.`groupId` = `g`.`id`
 ```
 ## distinct
-* `field` field's name of data table which you want unique.
+`field` field's name of data table which you want unique.
 
 Distinct method is used to return a unique different value.
 ```js
@@ -212,7 +212,7 @@ select * from `user` where `id` = 1
 ```
 
 ## field
-* `name` the field's names you want to keep.
+`name` the field's names you want to keep.
 
 In some cases, you don't need all the fields, and the `field` method keeps the fields you want to keep.
 ```js
@@ -228,7 +228,7 @@ select count(*) as count_result from `user`
 ```
 
 ## group
-* `name` field name to be grouped.
+`name` field name to be grouped.
 
 Group dataset based on one or more fields, if you want to group by gender
 ```js
@@ -256,9 +256,9 @@ User.where({status: 1}).limit('10,10').select()
 ```
 
 ## mJoin
-* `join` table name and alias to associate.
-* `condition` association condition.
-* `type` association type. `inner`,`left`,`right`
+`join` table name and alias to associate.
+`condition` association condition.
+`type` association type. `inner`,`left`,`right`
 Queries data from two or more tables based on the relationship between the columns in those tables.
 
 For example
@@ -271,7 +271,7 @@ select * from `user` `u` left join `profile` `p` on `p`.`uid` = `u`.`id`
 ```
 
 ## model
-* `name` table name.
+`name` table name.
 Replace a table with a veriable, we don't need `table` method to specify a table to be operated on.
 ```js
 const User = db.model('user')
@@ -281,8 +281,8 @@ Order.find(1)
 ```
 
 ## order
-* `name` field's name.
-* `type` order type `DESC`,'ASC'.
+`name` field's name.
+`type` order type `DESC`,'ASC'.
 Sorting the results of a query.
 ```js
 User.order('id', 'DESC').select()
@@ -293,8 +293,8 @@ User.order('id,status DESC').select()
 ```
 
 ## page
-* `page` pagination.
-* `listRow` number of data to be queried per page.
+`page` pagination.
+`listRow` number of data to be queried per page.
 The `page` method can only be used for paging queries.
 
 Query the data on the first page, and ten data per page.
@@ -304,14 +304,14 @@ User.page(1, 10).select()
 
 
 ## table
-* `name` table's name.
+`name` table's name.
 Specify a table to be operated on.
 ```js
 db.table('user').where({status: 1}).select()
 ```
 
 ## where
-* `condition` conditions for querying data.
+`condition` conditions for querying data.
 The `where` method is very important, it can be used in `select`,`update` or `del` methods, and it has many uses.
 
 Thie simplest use
@@ -339,10 +339,14 @@ Is that all ? No.
 If you want to fuzzy query or interval query, you can do that like
 ```js
 User.where({id: {in: [1, 2, 3, 4]}}).select()
+User.where({id: {between: [1, 4]}}).select()
+User.where({id: {like: '%root%'}}).select()
 ```
 or
 ```js
 User.where('id', 'in', [1, 2, 3, 4]).select()
+User.where('id', 'between', [1, 2, 3, 4]).select()
+User.where('id', 'like', '%root%').select()
 ```
 The resulting SQL statement will be
 ```sql
@@ -351,7 +355,7 @@ select * from `user` where `id` in (1,2,3,4)
 Same as `whereIn` method, what's `whereIn`? Please see [AdvancedQuery](#AdvancedQuery)
 
 ## whereOr
-* `condition` conditions for querying data.
+`condition` conditions for querying data.
 
 Needless to say, I believe you already know what this method is for.
 
@@ -366,6 +370,16 @@ Same as `where` method.
 * `whereNotBtw` where field not between
 * `whereLike` where field like
 * `whereNotLike` where field not like
+```js
+User.whereIn('id', '1,2,3,4').select()
+User.whereNotIn('id', '1,2,3,4').select()
+User.whereNull('id').select()
+User.whereNotNull('id').select()
+User.whereBtw('id', [1, 4]).select()
+User.whereNotBtw('id', [1, 4]).select()
+User.whereLike('id', '%root%').select()
+User.whereNotLike('id', '%root%').select()
+```
 
 
 ## release
