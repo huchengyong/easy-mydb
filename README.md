@@ -240,18 +240,133 @@ select * from `user` where `status` = 1 group by `gender`
 ```
 
 ## limit
+Limit method mainly used to specify the number of queries.
+
+Get 10 eligible users
+
+```js
+User.where({status: 1}).limit(10).select()
+```
+
+Get 10 users from 10
+```js
+User.where({status: 1}).limit(10, 10).select()
+// or
+User.where({status: 1}).limit('10,10').select()
+```
 
 ## mJoin
+* `join` table name and alias to associate.
+* `condition` association condition.
+* `type` association type. `inner`,`left`,`right`
+Queries data from two or more tables based on the relationship between the columns in those tables.
+
+For example
+```js
+User.alias('u').join('profile p', 'p.uid = u.id', 'left').select()
+```
+The resulting SQL statement will be
+```sql
+select * from `user` `u` left join `profile` `p` on `p`.`uid` = `u`.`id`
+```
 
 ## model
+* `name` table name.
+Replace a table with a veriable, we don't need `table` method to specify a table to be operated on.
+```js
+const User = db.model('user')
+const Order = db.model('order')
+User.find(1)
+Order.find(1)
+```
 
 ## order
+* `name` field's name.
+* `type` order type `DESC`,'ASC'.
+Sorting the results of a query.
+```js
+User.order('id', 'DESC').select()
+```
+Also you can order by two or more fields.
+```js
+User.order('id,status DESC').select()
+```
 
 ## page
+* `page` pagination.
+* `listRow` number of data to be queried per page.
+The `page` method can only be used for paging queries.
+
+Query the data on the first page, and ten data per page.
+```js
+User.page(1, 10).select()
+```
+
 
 ## table
+* `name` table's name.
+Specify a table to be operated on.
+```js
+db.table('user').where({status: 1}).select()
+```
 
 ## where
+* `condition` conditions for querying data.
+The `where` method is very important, it can be used in `select`,`update` or `del` methods, and it has many uses.
+
+Thie simplest use
+```js
+User.where({status: 1}).select()
+```
+or
+```js
+User.where('status', 1).select()
+```
+If you have two or more conditions
+```js
+User.where({gender: 1, status: 1}).select()
+```
+or
+```js
+User.where([{gender: 1}, {status: 1}]).select()
+```
+can even
+```js
+User.where({gender: 1}).where({status: 1}).select()
+```
+Is that all ? No.
+
+If you want to fuzzy query or interval query, you can do that like
+```js
+User.where({id: {in: [1, 2, 3, 4]}}).select()
+```
+or
+```js
+User.where('id', 'in', [1, 2, 3, 4]).select()
+```
+The resulting SQL statement will be
+```sql
+select * from `user` where `id` in (1,2,3,4)
+```
+Same as `whereIn` method, what's `whereIn`? Please see [AdvancedQuery](#AdvancedQuery)
+
+## whereOr
+* `condition` conditions for querying data.
+
+Needless to say, I believe you already know what this method is for.
+
+Same as `where` method.
+
+## AdvanceQuery
+* `whereIn` where field in
+* `whereNotIn` where field not in
+* `whereNull` whether the query field is null
+* `whereNotNull` whether the query field is not null
+* `whereBtw` where field between
+* `whereNotBtw` where field not between
+* `whereLike` where field like
+* `whereNotLike` where field not like
+
 
 ## release
 After use, you must use the `release` method to release resource
