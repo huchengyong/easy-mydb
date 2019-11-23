@@ -28,8 +28,8 @@ connection.query('SELECT * FROM member WHERE uid = 1 AND status = 1', function (
   console.log('The members are: ', results);
 });
 ```
-As you can see, you need to write native sql by your self. If you want to query more data from different table, you have
-to write more native sql like `SELECT * FROM ... WHERE ...`. It's very redundant and inconvenient.
+As you can see, you need to write native SQL statement by your self. If you want to query more data from different table, you have
+to write more native SQL statement like `SELECT * FROM ... WHERE ...`. It's very redundant and inconvenient.
 
 So how can we operate mysql table more convenient ? let's see following example.
 ```js
@@ -58,7 +58,7 @@ db.release()
 ```
 
 ## Connection options
-We use method `createPool` to connect `mysql`, the options are same as mysql's options.
+We use `createPool` method to connect `mysql`, the options are same as mysql's options.
 The most common options are
 * `host` The hostname of the database you are connecting to. (Default: localhost)
 * `port` The port number to connect to. (Default: 3306)
@@ -69,7 +69,9 @@ The most common options are
 * ... more options you can see on [Mysql](https://www.npmjs.com/package/mysql)
 
 ## Query data
-Use method `find` to query single data
+* `find` query single data
+* `select` query multiple data
+
 ```js
 User.where({id: 1}).find()
 ```
@@ -77,7 +79,6 @@ The resulting SQL statement may be
 ```SQL
 SELECT * FROM `user` where `id` = 1 LIMIT 1
 ```
-Use method `select` to query multiple data
 ```js
 User.where({status: 1}).select()
 ```
@@ -87,12 +88,13 @@ SELECT * FROM `user` where `status` = 1
 ```
 
 ## Insert data
-Use method `insert` to insert single data
+* `insert()` insert single data
+* `insertAll()` insert multiple data
+
 ```js
 let data = {name: 'root', 'age': 1, status: 1}
 User.insert(data)
 ```
-Use method `insertAll` to insert multiple data
 ```js
 let data = [
     {name: 'root', age: 1, status: 1},
@@ -112,24 +114,28 @@ User.insertAll(data, 100)
 ```
 
 ## Update data
-Just add data you want to updated and with method `where`
+* `update` do update with `where` method
+* `setField(name, value)` update single field's value
+* `setInc(name, value)` increment the field's value
+* `setDec(name, value)` decrement the field's value
+
 ```js
 let data = {name: 'administrator', age: 2}
 User.where({id: 1}).update(data)
 ```
-We also have some methods to update the specified fields
-* `setField(name, value)` update single field's value
-* `setInc(name, value)` increment the field's value
-* `setDec(name, value)` decrement the field's value
 ```js
 User.where({id: 1}).setField('name', 'UPPER(`name`)')
 // update `user` set `name` = upper(`name`) where `id` = 1
+```
+```js
 User.where({id: 1}).setInc('status')
 // update `user` set `status` = `status` + 1 where `id` = 1
+```
+```js
 User.where({id: 1}).setDec('age', 2)
 // update `user` set `age` = `age` - 2 where `id` = 1
 ```
-We can use method `update` to achieve the same effect like method `setField`,`setInc`,`setDec`.
+We can use `update` method to achieve the same effect like `setField`,`setInc`,`setDec`.
 Look at following example
 ```js
 User.where({id: 1}).exp('name', 'UPPER("root")').inc('status').dec('age', 2).update()
@@ -140,19 +146,20 @@ update `user` set `name` = UPPER("root"),`status` = `status` + 1,`age` = `age` -
 ```
 
 ## Delete data
-Use method `del` to delete data from database's table
+* `del` delete data from database's table
+
 ```js
 User.where({id: 1}).del()
 ```
-You can alse use method `del` more simpler
+You can alse use `del` method more simpler
 ```js
 User.del(1)
 ```
-`id` must be your table's primary key, if not, you can use method `setPk` to specify the primary key
+`id` must be table's primary key, if not, you can also use `setPk` method to specify the primary key
 ```js
 User.setPk('uid')
 ```
-Same as method `find`
+Same as `find` method
 
 ## Chained operations
 - [alias](#alias)
@@ -193,7 +200,7 @@ The data returned will be
 ```
 
 ## fetchSql
-If the result of query which you want is only the resulting SQL statement, `fetchSql` can help you.
+If the result of query which you want to is only the resulting SQL statement, `fetchSql` can help you.
 ```js
 User.where({id: 1}).select()
 ```
@@ -228,8 +235,22 @@ The resulting SQL statement will be
 select * from `user` where `status` = 1 group by `gender`
 ```
 
+## limit
+
+## mJoin
+
+## model
+
+## order
+
+## page
+
+## table
+
+## where
+
 ## release
-After use, you must use the release() method to release resource
+After use, you must use the `release` method to release resource
 ```js
 db.release()
 ```
