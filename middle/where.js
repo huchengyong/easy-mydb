@@ -6,20 +6,28 @@ module.exports = (_instance, maps) => {
     if (op && condition) {
         switch (R.toUpper(op)) {
             case 'IN':
-                if (typeof condition === 'object') {
-                    _instance.whereIn(field, condition, conj)
-                } else if (typeof condition === 'string') {
-                    let cn = condition.split(',');
-                    _instance.whereIn(field, cn, conj)
-                }
+                _instance.whereIn(field, condition, conj)
+                break;
+            case 'NOTIN':
+                _instance.whereNotIn(field, condition, conj)
                 break;
             case 'BETWEEN':
-                if (typeof condition === 'object') {
-                    _instance.whereBtw(field, condition)
-                }
+                _instance.whereBtw(field, condition, conj)
+                break;
+            case 'NOTBETWEEN':
+                _instance.whereNotBtw(field, condition, conj)
                 break;
             case 'LIKE':
-                _instance.whereLike(field, condition)
+                _instance.whereLike(field, condition, conj)
+                break;
+            case 'NOTLIKE':
+                _instance.whereNotLike(field, condition, conj)
+                break;
+            case 'NULL':
+                _instance.whereNull(field, condition, conj)
+                break;
+            case 'NOTNULL':
+                _instance.whereNotNull(field, condition, conj)
                 break;
             default :
                 let fd = R.replace('.')('`.`')(field)

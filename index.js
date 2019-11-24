@@ -138,4 +138,5 @@ class EasyMydb {
     }
 }
 
+module.exports = EasyMydb
 

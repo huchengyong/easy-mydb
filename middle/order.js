@@ -18,8 +18,8 @@ module.exports = (_instance, maps) => {
                 _instance.order(k, v)
             }
         } else {
-            let orders = ` \`${R.replace(/\./g)('`.`')(field)}\` `
-            _instance.options.orders += _instance.options.orders ? ',' + orders : orders
+            // let orders = ` \`${R.replace(/\./g)('`.`')(field)}\` `
+            _instance.options.orders += _instance.options.orders ? ',' + field : field
         }
     }
 }

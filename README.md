@@ -383,7 +383,7 @@ User.whereNotLike('id', '%root%').select()
 
 
 ## release
-After use, you must use the `release` method to release resource
+After use, you must use the `release` method.
 ```js
 db.release()
 ```
