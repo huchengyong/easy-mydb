@@ -4,8 +4,7 @@ module.exports = (_instance, maps) => {
 
     let fd = (field && field !== '*') ? '`' + R.replace(/\./g)('`.`')(field) + '`' : '*'
     fd = _instance.options.groups ? fd : "COUNT(" + fd + ") AS db_count"
-    _instance.sql = 'SELECT ' + fd
-    + _instance.getSelectSql()
+    _instance.sql = 'SELECT ' + fd + _instance.getSelectSql()
     if (_instance.options.groups) {
         _instance.sql = 'SELECT COUNT(' + fd + ') as db_count FROM (' + _instance.sql + ')e'
     }
