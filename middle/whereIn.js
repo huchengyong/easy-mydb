@@ -1,4 +1,5 @@
 const R = require('ramda')
+
 function whereIn (_instance, field, condition, conjunction) {
     let conj = conjunction || ' AND '
     if (condition) {
@@ -8,7 +9,7 @@ function whereIn (_instance, field, condition, conjunction) {
             condition = R.replace(/,/g)('\',\'')(condition)
         }
         field = R.replace(/\./g)('`.`')(field)
-        let where = ' `' + R.replace(/\B`|`\B/g)('')(field) + '` IN (\'' + condition + '\') '
+        let where = ' `' + R.replace(/`+$/)('')(R.replace(/^`+/)('')(field)) + '` IN (\'' + condition + '\') '
         _instance.options.wheres += _instance.options.wheres ? conj + where : where
     } else {
         if (typeof field === 'object') {

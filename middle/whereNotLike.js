@@ -4,7 +4,7 @@ function whereNotLike (_instance, field, condition, conjunction) {
     if (condition) {
         if (typeof condition === 'string') {
             field = R.replace(/\./g)('`.`')(field)
-            let where = ' `' + R.replace(/\B`|`\B/g)('')(field) + '` NOT LIKE \'' + condition + '\' '
+            let where = ' `' + R.replace(/`+$/)('')(R.replace(/^`+/)('')(field)) + '` NOT LIKE \'' + condition + '\' '
             _instance.options.wheres += _instance.options.wheres ? conj + where : where
         }
     } else {

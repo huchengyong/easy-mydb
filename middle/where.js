@@ -31,13 +31,13 @@ module.exports = (_instance, maps) => {
                 break;
             default :
                 let fd = R.replace('.')('`.`')(field)
-                let wheres = '`' + R.replace(/\B`|`\B/g)('')(fd) + '` ' + op + ' \'' + condition + '\''
+                let wheres = '`' + R.replace(/`+$/)('')(R.replace(/^`+/)('')(fd)) + '` ' + op + ' \'' + condition + '\''
                 _instance.options.wheres += !_instance.options.wheres ? ' ' + conj + ' ' + wheres : wheres
                 break;
         }
     } else if (op) {
         let fd = R.replace('.')('`.`')(field)
-        let wheres = '`' + R.replace(/\B`|`\B/g)('')(fd) + '` = \'' + op + '\''
+        let wheres = '`' + R.replace(/`+$/)('')(R.replace(/^`+/)('')(fd)) + '` = \'' + op + '\''
         _instance.options.wheres += !_instance.options.wheres ? ' ' + conj + ' ' + wheres : wheres
     } else {
         switch (typeof field) {

@@ -8,7 +8,7 @@ function whereNotIn (_instance, field, condition, conjunction) {
             condition = R.replace(/,/g)('\',\'')(condition)
         }
         field = R.replace(/\./g)('`.`')(field)
-        let where = ' `' + R.replace(/\B`|`\B/g)('')(field) + '` NOT IN (\'' + condition + '\') '
+        let where = ' `' + R.replace(/`+$/)('')(R.replace(/^`+/)('')(field)) + '` NOT IN (\'' + condition + '\') '
         _instance.options.wheres += _instance.options.wheres ? conj + where : where
     } else {
         if (typeof field === 'object') {
