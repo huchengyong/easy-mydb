@@ -23,12 +23,6 @@ module.exports = (_instance, maps) => {
             case 'NOTLIKE':
                 _instance.whereNotLike(field, condition, conj)
                 break;
-            case 'NULL':
-                _instance.whereNull(field, condition, conj)
-                break;
-            case 'NOTNULL':
-                _instance.whereNotNull(field, condition, conj)
-                break;
             default :
                 let fd = R.replace('.')('`.`')(field)
                 let wheres = '`' + R.replace(/`+$/)('')(R.replace(/^`+/)('')(fd)) + '` ' + op + ' \'' + condition + '\''
