@@ -2,6 +2,8 @@ const setColumns = require('../lib/setColumns')
 const R = require('ramda')
 module.exports = async (_instance, maps) => {
     let [ data, limit ] = maps
+    if (!data) throw 'Error: one parameter expected, none given'
+
     let result = null
     if (_instance.allowField == true) {
         await setColumns(_instance)

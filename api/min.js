@@ -1,6 +1,8 @@
 const R = require('ramda')
 module.exports = (_instance, maps) => {
 	const [ field ] = maps
+	if (!field) throw 'Error: one parameter expected, none given'
+
     _instance.sql = 'SELECT MIN(`' + R.replace('.')('`.`')(field) + '`) AS res '
     + _instance.getSelectSql()
     return _instance.query(_instance.sql).then((data) => {

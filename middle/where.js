@@ -26,20 +26,20 @@ module.exports = (_instance, maps) => {
             default :
                 let fd = R.replace('.')('`.`')(field)
                 let wheres = '`' + R.replace(/`+$/)('')(R.replace(/^`+/)('')(fd)) + '` ' + op + ' \'' + condition + '\''
-                _instance.options.wheres += !_instance.options.wheres ? ' ' + conj + ' ' + wheres : wheres
+                _instance.options.wheres += _instance.options.wheres ? ' ' + conj + ' ' + wheres : wheres
                 break;
         }
     } else if (op) {
         let fd = R.replace('.')('`.`')(field)
         let wheres = '`' + R.replace(/`+$/)('')(R.replace(/^`+/)('')(fd)) + '` = \'' + op + '\''
-        _instance.options.wheres += !_instance.options.wheres ? ' ' + conj + ' ' + wheres : wheres
+        _instance.options.wheres += _instance.options.wheres ? ' ' + conj + ' ' + wheres : wheres
     } else {
         switch (typeof field) {
             case 'object':
                 dealObject(_instance, field, conj);
                 break;
             case 'string':
-                _instance.options.wheres += !_instance.options.wheres ? ' ' + conj + ' ' + field : field
+                _instance.options.wheres += _instance.options.wheres ? ' ' + conj + ' ' + field : field
                 break;
             default:
                 _instance.options.wheres += ''

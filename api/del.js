@@ -6,7 +6,7 @@ module.exports = (_instance, maps) => {
     } else {
         let wheres = _instance.getWheres()
         if (wheres === '')
-            throw 'Lack of renewal conditions'
+            throw 'Error: Lack of renewal conditions'
         _instance.sql = 'DELETE FROM ' + '`' + _instance.schemaName + '`' + wheres
     }
     return _instance.query(_instance.sql).then((data) => {

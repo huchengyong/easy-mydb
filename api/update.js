@@ -4,7 +4,7 @@ module.exports = async (_instance, maps) => {
     const [ data ] = maps
     let wheres = _instance.getWheres()
     if (wheres === '')
-        throw 'Lack of renewal conditions'
+        throw 'Error: Lack of renewal conditions'
 
     if (_instance.allowField == true) await setColumns(_instance)
 

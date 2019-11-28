@@ -3,6 +3,7 @@ const dealData = require('../lib/dealData')
 const R = require('ramda')
 module.exports = async (_instance, maps) => {
     const [ data ] = maps
+    if (!data) throw 'Error: one parameter expected, none given'
     if (_instance.allowField == true) {
         await setColumns(_instance)
     }

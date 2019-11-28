@@ -2,7 +2,7 @@ const EasyMydb = require('./index')
 const config = {
     host: 'localhost',
     user: 'root',
-    password: '123456',
+    password: 'root',
     database: 'bearly.cn',
     prefix: 'ely_'
 }
@@ -12,30 +12,30 @@ const Menu = db.model('menu')
 const Staff = db.model('staff')
 
 async function test() {
-    let res = await Staff.alias('u')
+	let res = await Staff.alias('u')
         .mJoin('group g', 'g.id = u.groupId')
-        .field('u.groupId,u.userName,g.id,g.groupName')
-        .whereOr([{'g.id': {notin: '1,2'}}, {'g.id': {notbetween: [1,3]}}, {'g.groupName': {notlike: 'Hu%'}}])
+        .field('u.groupId,u.userName,u.id,g.groupName,g.rules,g.parentId')
+        // .distinct('u.id')
+        // .whereOr([{'g.id': {notin: '1,2'}}, {'g.id': {notbetween: [1,3]}}, {'g.groupName': {notlike: 'Hu%'}}])
         // .fetchSql()
+        // .where('u.id', '=', 5)
+        // .where({'u.id': 5})
+        // .where('u.userName', 'Hu')
+        .where('u.username = "Hu"')
+        .whereOr('u.id = 1')
+        .whereOr('u.id', '<>', 3)
+        .where({groupName: 'groupname'})
+        .where('u.groupId', '>', 67)
+        .whereOr({'u.groupId':{egt: 69}})
+        .whereNotLike({'g.groupName': '%groupname%'})
+        .whereNotBtw({'u.id': [1,7]})
+        .whereNotIn('u.id', '1,2,3,4,5')
+        .whereNotNull('g.groupName')
         .group('u.userName')
-        .select()
+        // .order('u.id', 'desc')
+        .select('u.id')
 
-    console.log(res)
-    // for (let $i = 0; $i < 10; $i++)
-    // {
-    // 	console.log(await Menu.field('id').find($i+1))
-    // }
-
-    // let a = await
-    // Group.where({id:{lt:10}})
-    // .where({groupName: {like: 'Hu%'}})
-    // .whereIn('id','5,6,7')
-    // .whereNotNull('id')
-    // .order('id', 'asc')
-    // // .fetchSql()
-    // .limit(0,10)
-    // .select()
-    // console.log(a)
+	    console.log(res)
 }
 
 test()
