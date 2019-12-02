@@ -261,7 +261,7 @@ User.where({status: 1}).limit('10,10').select()
 
 `condition` association condition.
 
-`type` association type. `inner`,`left`,`right`.
+`type` association type. `inner`,`left`,`right`. default `inner`
 
 Queries data from two or more tables based on the relationship between the columns in those tables.
 
@@ -288,7 +288,7 @@ Order.find(1)
 ## order
 `name` field's name.
 
-`type` order type `DESC`,'ASC'.
+`type` order type `DESC`,`ASC`.
 
 Sorting the results of a query.
 ```js
