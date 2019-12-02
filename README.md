@@ -258,8 +258,11 @@ User.where({status: 1}).limit('10,10').select()
 
 ## mJoin
 `join` table name and alias to associate.
+
 `condition` association condition.
-`type` association type. `inner`,`left`,`right`
+
+`type` association type. `inner`,`left`,`right`.
+
 Queries data from two or more tables based on the relationship between the columns in those tables.
 
 For example
@@ -273,6 +276,7 @@ select * from `user` `u` left join `profile` `p` on `p`.`uid` = `u`.`id`
 
 ## model
 `name` table name.
+
 Replace a table with a veriable, we don't need `table` method to specify a table to be operated on.
 ```js
 const User = db.model('user')
@@ -283,7 +287,9 @@ Order.find(1)
 
 ## order
 `name` field's name.
+
 `type` order type `DESC`,'ASC'.
+
 Sorting the results of a query.
 ```js
 User.order('id', 'DESC').select()
@@ -295,7 +301,9 @@ User.order('id,status DESC').select()
 
 ## page
 `page` pagination.
+
 `listRow` number of data to be queried per page.
+
 The `page` method can only be used for paging queries.
 
 Query the data on the first page, and ten data per page.
