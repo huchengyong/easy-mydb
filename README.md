@@ -172,6 +172,7 @@ Same as `find` method
 - [model](#model)
 - [order](#order)
 - [page](#page)
+- [strict](#strict)
 - [table](#table)
 - [where](#where)
 
@@ -302,6 +303,17 @@ Query the data on the first page, and ten data per page.
 User.page(1, 10).select()
 ```
 
+## strict
+Strict mode, be used in `update` `insert` `insertAll` methods. In general mode, if there are some fields in the operated data
+don't exist in the table, we will get some errors. So we need use `strict` method to filter some fields don't exist in the table. 
+```js
+let data = {name: 'root', age: 18, gender: 1}
+User.strict().insert(data)
+```
+If the `gender` field is not exist in `user` table, the resulting SQL statement will be
+```sql
+insert into `user` (`name`, `age`) values ('root', 18)
+```
 
 ## table
 `name` table's name.
@@ -314,7 +326,7 @@ db.table('user').where({status: 1}).select()
 `condition` conditions for querying data.
 The `where` method is very important, it can be used in `select`,`update` or `del` methods, and it has many uses.
 
-Thie simplest use
+The simplest usage
 ```js
 User.where({status: 1}).select()
 ```
