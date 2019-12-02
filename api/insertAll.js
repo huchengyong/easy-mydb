@@ -35,7 +35,7 @@ module.exports = async (_instance, maps) => {
         + R.join('`,`')(_instance.options.insertFields) 
         + '`) VALUE (' 
         + R.join('),(')(_instance.options.insertValues) + ')'
-        result = await _instance.query(_instance.sql)
+        result = _instance.isSql === true ? _instance.sql : (await _instance.query(_instance.sql))
     }
     return result
 }

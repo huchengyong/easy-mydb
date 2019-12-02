@@ -263,7 +263,7 @@ Queries data from two or more tables based on the relationship between the colum
 
 For example
 ```js
-User.alias('u').join('profile p', 'p.uid = u.id', 'left').select()
+User.alias('u').mJoin('profile p', 'p.uid = u.id', 'left').select()
 ```
 The resulting SQL statement will be
 ```sql
@@ -339,18 +339,31 @@ Is that all ? No.
 If you want to fuzzy query or interval query, you can do that like
 ```js
 User.where({id: {in: [1, 2, 3, 4]}}).select()
+User.where({id: {notin: '1,2,3,4'}}).select()
 User.where({id: {between: [1, 4]}}).select()
+User.where({id: {notbetween: '1,4'}}).select()
 User.where({id: {like: '%root%'}}).select()
+User.where({id: {notlike: '%root%'}}).select()
+```
+But what if a field in table is also named `like`,`in`,`between`...
+we suggest you use like the following
+```js
+User.where('between', '1').select()
+User.where('in', '1').select()
+User.where('like', '1').select()
 ```
 or
 ```js
-User.where('id', 'in', [1, 2, 3, 4]).select()
-User.where('id', 'between', [1, 2, 3, 4]).select()
-User.where('id', 'like', '%root%').select()
+User.where({'`between`': 1}).select()
+User.where({'`in`': 1}).select()
+User.where({'`like`': 1}).select()
 ```
+
 The resulting SQL statement will be
 ```sql
-select * from `user` where `id` in (1,2,3,4)
+select * from `user` where `between` = 1
+select * from `user` where `in` = 1
+select * from `user` where `like` = 1
 ```
 Same as `whereIn` method, what's `whereIn`? Please see 'Advanced query'
 
@@ -359,9 +372,9 @@ Same as `whereIn` method, what's `whereIn`? Please see 'Advanced query'
 
 Needless to say, I believe you already know what this method is for.
 
-Same as `where` method.
+Similar with `where` method.
 
-## Advance query
+## Advanced query
 * `whereIn` where field in
 * `whereNotIn` where field not in
 * `whereNull` whether the query field is null
@@ -380,10 +393,26 @@ User.whereNotBtw('id', [1, 4]).select()
 User.whereLike('id', '%root%').select()
 User.whereNotLike('id', '%root%').select()
 ```
+## Keywords
+* `in/notin` {id: {in/notin: '1,2'}}, id in/notin (1,2)
+* `between/notbetween` {id: {between/notbetween: '1,2'}}, id between/notbetween 1 and 2
+* `like/notlike` {id: {like/notlike: '%root%'}}, id like/notlike '%root%'
+* `gt` {id: {gt: 1}}, id > 1
+* `lt` {id: {lt: 1}}, id < 1
+* `eq` {id: {eq: 1}}, id = 1
+* `neq` {id: {neq: 1}}, id <> 1
+* `egt` {id: {egt: 1}}, id >= 1
+* `elt` {id: {elt: 1}}, id <= 1
 
-
-## release
-After use, you must use the `release` method.
+## Release
+Release link to connection pool
 ```js
 db.release()
+User.release()
+```
+## Destroy
+Close the connection and remove it from the pool
+```js
+db.destroy()
+User.destroy()
 ```

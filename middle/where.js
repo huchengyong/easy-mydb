@@ -30,9 +30,15 @@ module.exports = (_instance, maps) => {
                 break;
         }
     } else if (op) {
-        let fd = R.replace('.')('`.`')(field)
-        let wheres = '`' + R.replace(/`+$/)('')(R.replace(/^`+/)('')(fd)) + '` = \'' + op + '\''
-        _instance.options.wheres += _instance.options.wheres ? ' ' + conj + ' ' + wheres : wheres
+        if (typeof op === 'object') {
+            let obj = {};
+            obj[field] = op
+            dealObject(_instance, obj, conj);
+        } else {
+            let fd = R.replace('.')('`.`')(field)
+            let wheres = '`' + R.replace(/`+$/)('')(R.replace(/^`+/)('')(fd)) + '` = \'' + op + '\''
+            _instance.options.wheres += _instance.options.wheres ? ' ' + conj + ' ' + wheres : wheres
+        }
     } else {
         switch (typeof field) {
             case 'object':

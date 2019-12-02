@@ -6,7 +6,11 @@ module.exports = async (_instance, maps) => {
     if (wheres === '')
         throw 'Error: Lack of renewal conditions'
 
-    if (_instance.allowField == true) await setColumns(_instance)
+    if (_instance.allowField == true) {
+        let updateExp = _instance.options.updateExp
+        await setColumns(_instance)
+        _instance.options.updateExp = updateExp
+    }
 
     for (let k in data) {
         let v = data[k]
@@ -15,5 +19,5 @@ module.exports = async (_instance, maps) => {
     }
 
     _instance.sql = 'UPDATE `' + _instance.schemaName + '` SET ' + R.join(',')(_instance.options.updateExp) + wheres
-    return _instance.query(_instance.sql)
+    return _instance.isSql === true ? _instance.sql : _instance.query(_instance.sql)
 }

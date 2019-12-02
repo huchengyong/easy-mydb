@@ -1,8 +1,8 @@
 const R = require('ramda')
 
 const middle = [
-    'alias', 'allowFields', 'dec', 'distinct', 'exp', 'fetchSql', 'field', 'group',
-    'inc', 'limit', 'mJoin', 'order', 'page', 'where', 'whereBtw', 'whereIn', 'whereLike',
+    'alias', 'dec', 'distinct', 'exp', 'fetchSql', 'field', 'group',
+    'inc', 'limit', 'mJoin', 'order', 'page', 'strict', 'where', 'whereBtw', 'whereIn', 'whereLike',
     'whereNotBtw', 'whereNotIn', 'whereNotLike', 'whereNull', 'whereNotNull', 'whereOr'
 ]
 
