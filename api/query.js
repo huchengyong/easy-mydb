@@ -16,7 +16,7 @@ module.exports = async (_instance, maps) => {
     }
     //fetch sql
     if (_instance.isSql === true) {
-        return _instance.sql
+        return R.replace(/\s+/g)(' ')(_instance.sql)
     } else {
         return new Promise((resolve, reject) => {
             _instance.connection.then((connection) => {

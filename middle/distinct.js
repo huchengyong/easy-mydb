@@ -5,6 +5,6 @@ module.exports = (_instance, maps) => {
         let distinct = R.replace(/,/g)('`,`')(field)
         distinct = R.replace(/\./g)('`.`')(distinct)
         distinct = distinct ? '`' + distinct + '`' : ''
-        _instance.options.distincts = ' DISTINCT ' + distinct;
+        _instance.options.fields = ' DISTINCT ' + distinct;
     }
 }

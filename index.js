@@ -105,16 +105,16 @@ class EasyMydb {
     }
 
     getSelectSql() {
-        return ' FROM `' + this.schemaName + '` '
-        + (this.options.aliasStr || '')
-        + (this.options.joinStr || '')
-        + this.getWheres() + ' ' + (this.options.groups || '') + ' '
-        + this.getOrders()
-        + this.getLimits()
+        let wheres = ' FROM `' + this.schemaName + '` '
+            + (this.options.aliasStr || '')
+            + (this.options.joinStr || '')
+            + this.getWheres() + ' ' + (this.options.groups || '') + ' '
+            + this.getOrders()
+            + this.getLimits()
+        return R.replace(/\s+/g)(' ')(wheres)
     }
 
     getWheres() {
-        this.options.wheres = R.replace(/\s+/g)(' ')(this.options.wheres || '')
         return !this.options.wheres ? '' : ' WHERE ' + this.options.wheres
     }
 
