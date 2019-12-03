@@ -7,7 +7,7 @@ module.exports = (_instance, maps) => {
         _instance.sql = 'SELECT COUNT(' + fd + ') AS mydb_count FROM ('
             + `SELECT ${_instance.options.fields || '*'}`
             + _instance.getSelectSql()
-            + ')' + _instance.options.aliasStr
+            + ')' + (_instance.options.aliasStr || 'mydb_count_a')
     } else {
         _instance.sql = 'SELECT COUNT(' + fd + ') AS mydb_count '
             + _instance.getSelectSql()

@@ -64,6 +64,7 @@ The most common options are
 * `port` The port number to connect to. (Default: 3306)
 * `user`  The MySQL user to authenticate as.
 * `password` The password of that MySQL user.
+* `prefix` The prefix of table's name.
 * `database` Name of the database to use for this connection (Optional).
 * `connectionLimit` The maximum number of connections to create at once. (Default: 10).
 * ... more options you can see on [Mysql](https://www.npmjs.com/package/mysql)
@@ -205,7 +206,7 @@ The data returned will be
 ## fetchSql
 If the result of query which you want to is only the resulting SQL statement, `fetchSql` can help you.
 ```js
-User.where({id: 1}).select()
+User.where({id: 1}).fetchSql().select()
 ```
 The returned result is not a dataset, but a string of SQL statements.
 ```sql
@@ -313,7 +314,7 @@ User.page(1, 10).select()
 
 ## strict
 Strict mode, be used in `update` `insert` `insertAll` methods. In general mode, if there are some fields in the operated data
-don't exist in the table, we will get some errors. So we need use `strict` method to filter some fields don't exist in the table. 
+don't exist in the table, we will get some errors. So we need to use `strict` method to filter some fields don't exist in the table. 
 ```js
 let data = {name: 'root', age: 18, gender: 1}
 User.strict().insert(data)
@@ -413,6 +414,28 @@ User.whereNotBtw('id', [1, 4]).select()
 User.whereLike('id', '%root%').select()
 User.whereNotLike('id', '%root%').select()
 ```
+
+## Aggregate query
+In the application, we often use some statistical data. We provide some methods to do that.
+* `max` get the maximum value, parameter is the field name to be counted. (essential)
+* `min` get the minimum value, parameter is the field name to be counted. (essential)
+* `avg` get the average value, parameter is the field name to be counted. (essential)
+* `count` statistic quantity, parameter is the field name to be counted. (optional)
+* `sum` get the total value, parameter is the field name to be counted. (essential)
+
+If you have associated operations when aggregating queries.
+```js
+Staff.alias('s').mJoin('group g', 'g.id = s.groupId').count()
+```
+You will get error like
+```sql
+Duplicate column name 'id'
+```
+So you need use `field` method to specify a field name just like
+```js
+Staff.alias('s').mJoin('group g', 'g.id = s.groupId').field('s.id').count()
+```
+
 ## Keywords
 * `in/notin` {id: {in/notin: '1,2'}}, id in/notin (1,2)
 * `between/notbetween` {id: {between/notbetween: '1,2'}}, id between/notbetween 1 and 2

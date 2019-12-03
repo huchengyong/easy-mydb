@@ -7,7 +7,7 @@ module.exports = (_instance, maps) => {
         _instance.sql = 'SELECT MAX(`' + R.replace(/\./g)('`.`')(field) + '`) AS mydb_max FROM ('
             + `SELECT ${_instance.options.fields || '*'}`
             + _instance.getSelectSql()
-            + ')' + _instance.options.aliasStr
+            + ')' + (_instance.options.aliasStr || 'mydb_max_a')
     } else {
         _instance.sql = 'SELECT MAX(`' + R.replace(/\./g)('`.`')(field) + '`) AS mydb_max '
             + _instance.getSelectSql()

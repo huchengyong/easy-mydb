@@ -8,7 +8,7 @@ module.exports = (_instance, maps) => {
         _instance.sql = 'SELECT SUM(`' + R.replace(/\./g)('`.`')(field) + '`) AS mydb_sum FROM ('
             + `SELECT ${_instance.options.fields || '*'}`
             + _instance.getSelectSql()
-            + ')' + _instance.options.aliasStr
+            + ')' + (_instance.options.aliasStr || 'mydb_sum_a')
     } else {
         _instance.sql = 'SELECT SUM(`' + R.replace(/\./g)('`.`')(field) + '`) AS mydb_sum '
             + _instance.getSelectSql()
