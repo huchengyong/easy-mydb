@@ -180,7 +180,7 @@ Same as `find` method
 ## alias
 `alias` alias of the current data table.
 
-Alias is used to set the alias of the current data table, which is convinient to use other chained operations such as method `mJoin`. Because the `join` is a build-in method of JavaScript, so we use `mJoin` instead. 
+Alias is used to set the alias of the current data table, which is convenient to use other chained operations such as method `mJoin`. Because the `join` is a build-in method of JavaScript, so we use `mJoin` instead. 
 ```js
 User.alias('u').mJoin('group g', 'u.groupId = g.id').select()
 ```
@@ -278,7 +278,7 @@ select * from `user` `u` left join `profile` `p` on `p`.`uid` = `u`.`id`
 ## model
 `name` table name.
 
-Replace a table with a veriable, we don't need `table` method to specify a table to be operated on.
+Replace a table with a variable, we don't need `table` method to specify a table to be operated on.
 ```js
 const User = db.model('user')
 const Order = db.model('order')
