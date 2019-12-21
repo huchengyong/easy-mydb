@@ -58,7 +58,7 @@ db.release()
 
 后面还会有更多简便操作的介绍, 比如最常见的增删改查
 
-## Connection options
+## 连接参数
 其实 `Easy-mydb` 还是采用 `Mysql` 这个库的方式来链接数据库的, 参数完全一致, 只是新增了一个prefix表前缀参数
 常用的参数如下
 * `host` 主机. (默认: localhost)
@@ -70,7 +70,7 @@ db.release()
 * `connectionLimit` 最大连接数. (默认: 10).
 * ... 更多参数选项可参考 [Mysql](https://www.npmjs.com/package/mysql)
 
-## Query data
+## 查询数据
 * `find` 查询单条数据
 * `select` 查询数据集
 
@@ -89,7 +89,7 @@ SQL语句是
 SELECT * FROM `user` where `status` = 1
 ```
 
-## Insert data
+## 插入数据
 * `insert()` 插入一条数据
 * `insertAll()` 插入数据集
 
@@ -115,7 +115,7 @@ let data = [
 User.insertAll(data, 100)
 ```
 
-## Update data
+## 更新数据
 * `update()` 配合`where`方法实现更新操作
 * `setField(name, value)` 更新某个字段的值
 * `setInc(name, value)` 自增某个字段的值
@@ -146,7 +146,7 @@ SQL语句是
 update `user` set `name` = UPPER("root"),`status` = `status` + 1,`age` = `age` - 2 where `id` = 1
 ```
 
-## Delete data
+## 删除数据
 * `del()` 删除一条数据
 
 ```js
